@@ -1,75 +1,73 @@
-# React + TypeScript + Vite
+# 🧿 Fullstack Project Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend del proyecto educativo Full Stack desarrollado como proyecto final de ThePower.
 
-Currently, two official plugins are available:
+La aplicación permitirá a los usuarios estudiar vocabulario mediante diferentes actividades y consultar su progreso dentro del curso seleccionado.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Tecnologías
 
-## React Compiler
+* React
+* TypeScript
+* Vite
+* CSS Modules
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Objetivo del frontend
 
-## Expanding the ESLint configuration
+El frontend será responsable de:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+* mostrar la interfaz de usuario
+* gestionar la navegación entre páginas
+* gestionar el estado necesario de la aplicación
+* permitir seleccionar el curso activo
+* mostrar vocabulario y actividades
+* capturar las respuestas del usuario
+* comunicarse con el backend
+* mostrar resultados y progreso
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Las reglas de negocio y los algoritmos principales se implementarán en el backend.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Estructura
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+La estructura inicial del proyecto será sencilla y se ampliará conforme avance el MVP.
 
+```text
+src/
+├── assets/
+├── components/
+├── context/
+├── hooks/
+├── pages/
+├── services/
+├── styles/
+├── types/
+├── utils/
+├── App.tsx
+└── main.tsx
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+Responsabilidades principales:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+* `components` → componentes reutilizables
+* `pages` → páginas principales
+* `context` → estado global necesario
+* `hooks` → lógica React reutilizable
+* `services` → comunicación con el backend
+* `types` → tipos TypeScript
+* `utils` → utilidades propias del frontend
+* `styles` → estilos globales
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Proyecto
 
+Este repositorio contiene únicamente el **frontend**.
+
+El backend se desarrolla en un repositorio Git independiente:
+
+```text
+fullstack-project-backend
 ```
+
+## Estado
+
+Proyecto en desarrollo.
+
+La documentación se irá ampliando progresivamente conforme se implementen las diferentes fases del MVP.
