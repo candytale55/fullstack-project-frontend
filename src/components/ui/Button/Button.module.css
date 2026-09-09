@@ -1,0 +1,29 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: var(--space-sm) var(--space-md);
+
+  border: 1px solid transparent;
+  border-radius: var(--border-radius-md);
+
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.primary {
+  color: var(--color-surface);
+  background-color: var(--color-text);
+}
+
+.secondary {
+  color: var(--color-text);
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
