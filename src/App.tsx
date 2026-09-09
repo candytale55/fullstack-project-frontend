@@ -1,5 +1,6 @@
 import AppLayout from './components/layout/AppLayout/AppLayout.tsx'
 import Button from './components/ui/Button/Button.tsx'
+import Input from './components/ui/Input/Input.tsx'
 
 export default function App() {
   return (
@@ -9,9 +10,19 @@ export default function App() {
         <p>Content</p>
 
 
-        <Button>Primary</Button>
-        <Button variant="secondary">Secondary</Button>
-        <Button disabled>Disabled</Button>
+        <Input
+          type="email"
+          placeholder="Email"
+        />
+
+        <Input
+          type="password"
+          placeholder="Password"
+        />
+
+        <Button>
+          Login
+        </Button>
 
       </AppLayout>
     </>
