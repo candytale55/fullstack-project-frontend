@@ -1,16 +1,11 @@
-import PageContainer from './components/layout/PageContainer/PageContainer.tsx'
-import NavBar from './components/layout/NavBar/Navbar.tsx'
+import AppLayout from './components/layout/AppLayout/AppLayout.tsx'
 
 export default function App() {
   return (
     <>
-      
-      <NavBar />
-      
-      <PageContainer>
+      <AppLayout>
         <h1>Hello World</h1>
-      </PageContainer>
-    
+      </AppLayout>
     </>
   )
 }
