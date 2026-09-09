@@ -3,6 +3,7 @@
   max-width: var(--content-max-width);
   margin: 0 auto;
   padding: var(--space-md);
+  border: 2px solid blue; /* TODO: Remove this debug border */
 }
 
 @media (min-width: 768px) {
