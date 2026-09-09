@@ -1,5 +1,5 @@
 import AppLayout from './components/layout/AppLayout/AppLayout.tsx'
-import Card from './components/ui/Card/Card.tsx'
+import Alert from './components/ui/Alert/Alert.tsx'
 
 export default function App() {
   return (
@@ -7,11 +7,15 @@ export default function App() {
       <AppLayout>
         <h1>Language Learning App</h1>
 
-
-        <Card>
-          This is a card component.
-        </Card>
-
+        <Alert variant="info">
+          This is an info alert.
+        </Alert>
+        <Alert variant="success">
+          This is a success alert.
+        </Alert>
+        <Alert variant="error">
+          This is an error alert.
+        </Alert>
 
       </AppLayout>
     </>
