@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Miscellaneous
+conc.py
+project_context.txt 
+# TODO: Remove files before deploying
