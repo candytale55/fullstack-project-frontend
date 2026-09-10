@@ -2,6 +2,7 @@ import LoginForm from '../../components/auth/LoginForm/LoginForm'
 import styles from './LoginPage.module.css'
 
 export default function LoginPage() {
+
   return (
     <div className={styles.loginPage}>
       <section className={styles.loginPage}>
