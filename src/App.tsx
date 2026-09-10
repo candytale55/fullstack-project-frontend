@@ -1,5 +1,5 @@
 import AppLayout from './components/layout/AppLayout/AppLayout.tsx'
-import Loader from './components/ui/Loader/Loader.tsx'
+import LoginForm from './components/auth/LoginForm/LoginForm.tsx'
 
 export default function App() {
   return (
@@ -7,7 +7,7 @@ export default function App() {
       <AppLayout>
         <h1>Language Learning App</h1>
 
-        <Loader size="large" />
+        <LoginForm />
 
       </AppLayout>
     </>
