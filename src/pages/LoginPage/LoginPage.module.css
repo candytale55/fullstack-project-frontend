@@ -1,0 +1,38 @@
+.loginPage {
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+
+  padding: var(--space-lg) 0;
+}
+
+.content {
+  width: 100%;
+  max-width: 28rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.header h1,
+.header p {
+  margin: 0;
+}
+
+.header p {
+  color: var(--color-text-muted);
+}
+
+@media (min-width: 768px) {
+  .loginPage {
+    padding: var(--space-xl) 0;
+  }
+}
