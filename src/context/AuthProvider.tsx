@@ -1,5 +1,6 @@
 /*
- * Implement state management and context provider for authentication.
+ * AuthProvider is the component responsible for storing and providing the application's
+ * authentication state and authentication actions to its descendant components.
  */
 
 import {
