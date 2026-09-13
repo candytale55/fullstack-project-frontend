@@ -1,9 +1,15 @@
-import type { SubmitEvent } from 'react'
 import { useState } from 'react'
+import type { SubmitEvent } from 'react'
+
 import Card from '../../ui/Card/Card'
 import Button from '../../ui/Button/Button'
 import Input from '../../ui/Input/Input'
+import Alert from '../../ui/Alert/Alert'
+import Loader from '../../ui/Loader/Loader'
 import styles from './LoginForm.module.css'
+
+import useAuth from '../../../hooks/useAuth'
+
 
 
 export default function LoginForm() {
@@ -11,16 +17,43 @@ export default function LoginForm() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => { 
+  const { login } = useAuth()
+
+
+  const handleSubmit = async (
+    event: SubmitEvent<HTMLFormElement>
+  ) => { 
     event.preventDefault()
-    console.log({ name, email, password }) // TODO: Remove this line before deploying
+    //console.log({ name, email, password }) // TODO: Remove this line before deploying
+  
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      await login({ name, email, password })
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message)
+      } else {
+        setError("An unexpected error occurred")
+      }
+    } finally {
+      setIsLoading(false)
+    }
   }
   return (
     <Card>
       <form
         className={styles.form}
         onSubmit={handleSubmit}>
+        
+        {error &&
+          <Alert variant="error">
+            {error}
+          </Alert>}
 
         <div className={styles.field}>
           <label htmlFor="name">Nombre de usuario</label>
@@ -30,7 +63,8 @@ export default function LoginForm() {
             type="text"
             autoComplete="username"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(event) => setName(event.target.value)}
+            disabled={isLoading}
             required />
         </div>
 
@@ -42,7 +76,8 @@ export default function LoginForm() {
             type="email"
             autoComplete="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(event) => setEmail(event.target.value)}
+            disabled={isLoading}
             required />
         </div>
 
@@ -54,11 +89,20 @@ export default function LoginForm() {
             type="password"
             autoComplete="current-password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(event) => setPassword(event.target.value)}
+            disabled={isLoading}
             required />
         </div>
 
-        <Button type="submit">Iniciar sesión</Button>
+        <Button
+          type="submit"
+          disabled={isLoading}>
+          {isLoading ? (
+            <Loader size="small" />
+          ) : (
+            'Iniciar sesión'
+          )}
+        </Button>
       </form>
     </Card>
   )

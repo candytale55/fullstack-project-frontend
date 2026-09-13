@@ -9,6 +9,7 @@ export type AuthUser = {
 
 // Credentials required to log in
 export type LoginCredentials = {
+  name?: string // Optional for login, required for registration
   email: string
   password: string
 }
