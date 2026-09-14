@@ -4,7 +4,6 @@ import styles from './LoginPage.module.css'
 export default function LoginPage() {
 
   return (
-    <div className={styles.loginPage}>
       <section className={styles.loginPage}>
         <div className={styles.content}>
           <header className={styles.header}>
@@ -14,6 +13,5 @@ export default function LoginPage() {
           <LoginForm />
         </div>
       </section>
-    </div>
   )
 }
