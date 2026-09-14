@@ -4,6 +4,8 @@ import AppLayout from './components/layout/AppLayout/AppLayout.tsx'
 import DashboardPage from './pages/DashboardPage/DashboardPage.tsx'
 import LoginPage from './pages/LoginPage/LoginPage.tsx'
 import RegisterPage from './pages/RegisterPage/RegisterPage.tsx'
+import LanguagesPage from './pages/LanguagesPage/LanguagePage.tsx'
+
 
 export default function App() {
 
@@ -17,6 +19,11 @@ export default function App() {
           <Route path="/dashboard" element={
             <ProtectedRoute>
               <DashboardPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/languages" element={
+            <ProtectedRoute>
+              <LanguagesPage />
             </ProtectedRoute>
           } />
         </Routes>

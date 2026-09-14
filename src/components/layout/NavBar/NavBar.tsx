@@ -26,7 +26,7 @@ export default function NavBar() {
         <header className={styles.navbar}>
             <div className={styles.content}>
                 <NavLink
-                    to={isAuthenticated ? '/dashboard' : '/login'}
+                    to={isAuthenticated ? '/languages' : '/login'}
                     className={styles.brand}>
                     Language Learning
                 </NavLink>
@@ -42,6 +42,15 @@ export default function NavBar() {
                                         : styles.link
                                 }>
                                 Dashboard
+                            </NavLink>
+                            <NavLink
+                                to="/languages"
+                                className={({ isActive }) =>
+                                    isActive
+                                        ? `${styles.link} ${styles.active}`
+                                        : styles.link
+                                }>
+                                Idiomas
                             </NavLink>
 
                             <span
