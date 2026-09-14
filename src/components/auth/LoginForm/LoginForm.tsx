@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { SubmitEvent } from 'react'
+import { useNavigate } from 'react-router'
 
 import Card from '../../ui/Card/Card'
 import Button from '../../ui/Button/Button'
@@ -21,6 +22,7 @@ export default function LoginForm() {
   const [error, setError] = useState<string | null>(null)
 
   const { login } = useAuth()
+  const navigate = useNavigate()
 
 
   const handleSubmit = async (
@@ -34,6 +36,7 @@ export default function LoginForm() {
 
     try {
       await login({ name, email, password })
+      navigate('/dashboard')
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message)

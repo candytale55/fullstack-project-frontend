@@ -34,8 +34,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         // TODO: Replace this mock with a real auth service call once backend auth is implemented.
         setUser({
-            id: "temp-id",
-            name: credentials.name ?? credentials.email, // Fallback to email if name is not provided
+            id: 'temp-id',
+            name: 'Test User',
             email: credentials.email,
         })
     }
