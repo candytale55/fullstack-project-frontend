@@ -1,16 +1,26 @@
-import { NavLink } from 'react-router'
+import { NavLink, useNavigate } from 'react-router'
 
 import Button from '../../ui/Button/Button'
 import  useAuth  from '../../../hooks/useAuth'
 
-import styles from './Navbar.module.css'
+import styles from './NavBar.module.css'
 
-export default function Navbar() {
+export default function NavBar() {
+
+    // Get state and actions from the authentication context.
     const {
         user,
         isAuthenticated,
         logout,
     } = useAuth()
+
+    const navigate = useNavigate()
+
+    // Redirect the user to the login page after logging out.
+    const handleLogout = () => {
+        logout()
+        navigate('/login')
+    }
 
     return (
         <header className={styles.navbar}>
@@ -42,7 +52,7 @@ export default function Navbar() {
                             <Button
                                 type="button"
                                 variant="secondary"
-                                onClick={logout}>
+                                onClick={ handleLogout }>
                                 Log out
                             </Button>
                         </>
