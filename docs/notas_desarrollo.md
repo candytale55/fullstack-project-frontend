@@ -11,8 +11,35 @@ La estructura se ampliará progresivamente, evitando crear componentes o abstrac
 
 Las notas de desarrollo del backend están en el repo del [backend](https://github.com/candytale55/fullstack-project-backend/blob/main/docs/notas_desarrollo.md) y también contienen alguna información para el front.
 
-## Etapas
+## Arquitectura de navegación de contenidos
 
-### Primera etapa: layout y componentes base
+El frontend seguirá una jerarquía flexible para organizar los contenidos de aprendizaje:
 
-En esta primera etapa se creará el **layout básico del frontend** y los **componentes reutilizables esenciales** que servirán de base para las siguientes funcionalidades, como navegación, botones, inputs, tarjetas, contenedores y mensajes de estado. Los estilos se implementarán con **CSS Modules y CSS sencillo**, priorizando una estructura clara, mantenible y **responsive para móvil y escritorio**. En esta fase no se trabajará todavía el diseño visual definitivo; la identidad gráfica, estilos avanzados y refinamiento de la interfaz se aplicarán en una etapa posterior.
+```text
+Language
+└── Course
+    ├── Units
+    │   └── Exercises
+    │
+    └── Exercises
+```
+
+Un idioma puede tener varios cursos. Cada curso puede organizarse de dos formas:
+
+* **Curso estructurado por unidades**, por ejemplo un curso académico de nivel B2 con varias unidades, y cada unidad con sus propios ejercicios.
+* **Curso directo a ejercicios**, por ejemplo un curso temático de Portugués de Negocios sin necesidad de dividirse en unidades.
+
+Para mantener el MVP sencillo, cada curso utilizará una sola estructura: **o bien unidades que contienen ejercicios, o bien ejercicios directamente**.
+
+Las páginas principales seguirán esta separación:
+
+```text
+LanguagesPage
+→ CoursesPage
+→ CoursePage
+→ UnitsPage o ExercisesPage
+→ ExercisePage
+```
+
+`LanguagesPage` y `CoursesPage` muestran listados, mientras que `CoursePage` representa el detalle de un curso concreto y determina si el siguiente nivel de navegación son unidades o ejercicios.
+
