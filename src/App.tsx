@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router'
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute.tsx'
 import AppLayout from './components/layout/AppLayout/AppLayout.tsx'
 import DashboardPage from './pages/DashboardPage/DashboardPage.tsx'
 import LoginPage from './pages/LoginPage/LoginPage.tsx'
@@ -13,7 +14,11 @@ export default function App() {
           <Route path="/" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          } />
         </Routes>
       </AppLayout>
     </>
