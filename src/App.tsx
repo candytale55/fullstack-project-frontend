@@ -6,7 +6,7 @@ import LoginPage from './pages/LoginPage/LoginPage.tsx'
 import RegisterPage from './pages/RegisterPage/RegisterPage.tsx'
 import LanguagesPage from './pages/LanguagesPage/LanguagePage.tsx'
 import CoursesPage from './pages/CoursesPage/CoursesPage.tsx'
-
+import CoursePage from './pages/CoursePage/CoursePage.tsx'
 
 export default function App() {
 
@@ -35,12 +35,20 @@ export default function App() {
               </ProtectedRoute>
             } />
           <Route
-            path="/languages/:languageId/courses/:courseId"
+            path="/languages/:languageId/courses/"
             element={
               <ProtectedRoute>
                 <CoursesPage />
               </ProtectedRoute>
             } />
+          <Route
+            path="/languages/:languageId/courses/:courseId"
+            element={
+              <ProtectedRoute>
+                <CoursePage />
+              </ProtectedRoute>
+            }/>
+          
         </Routes>
       </AppLayout>
     </>
