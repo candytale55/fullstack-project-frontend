@@ -5,6 +5,7 @@ import DashboardPage from './pages/DashboardPage/DashboardPage.tsx'
 import LoginPage from './pages/LoginPage/LoginPage.tsx'
 import RegisterPage from './pages/RegisterPage/RegisterPage.tsx'
 import LanguagesPage from './pages/LanguagesPage/LanguagePage.tsx'
+import CoursesPage from './pages/CoursesPage/CoursesPage.tsx'
 
 
 export default function App() {
@@ -26,6 +27,20 @@ export default function App() {
               <LanguagesPage />
             </ProtectedRoute>
           } />
+          <Route
+            path="/languages/:languageId/courses"
+            element={
+              <ProtectedRoute>
+                <CoursesPage />
+              </ProtectedRoute>
+            } />
+          <Route
+            path="/languages/:languageId/courses/:courseId"
+            element={
+              <ProtectedRoute>
+                <CoursesPage />
+              </ProtectedRoute>
+            } />
         </Routes>
       </AppLayout>
     </>

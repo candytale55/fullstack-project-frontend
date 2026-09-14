@@ -28,7 +28,7 @@ export default function LanguagesPage() {
 
             <Link
               to={`/languages/${language.id}/courses`}
-              className={styles.courseLink}>
+              className={styles.courseLink} >
               Ver cursos
             </Link>
           </article>

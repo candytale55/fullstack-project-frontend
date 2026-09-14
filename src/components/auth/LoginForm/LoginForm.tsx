@@ -29,14 +29,13 @@ export default function LoginForm() {
     event: SubmitEvent<HTMLFormElement>
   ) => { 
     event.preventDefault()
-    //console.log({ name, email, password }) // TODO: Remove this line before deploying
   
     setIsLoading(true)
     setError(null)
 
     try {
       await login({ name, email, password })
-      navigate('/dashboard')
+      navigate('/languages')
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message)
