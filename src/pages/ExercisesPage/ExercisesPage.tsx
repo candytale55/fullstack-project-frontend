@@ -64,6 +64,7 @@ export default function ExercisesPage() {
 
   return (
     <div className={styles.exercisesPage}>
+
       <header className={styles.header}>
         <p>{course?.title}</p>
         {unit && <p>{unit?.title}</p>}
@@ -72,31 +73,40 @@ export default function ExercisesPage() {
       </header>
 
       <main className={styles.exercisesPage}>
-        {exercises.map((exercise) => (
-          <article
-            key={exercise.id}
-            className={styles.exerciseCard}
-          >
-            <div className={styles.exerciseInfo}>
-              <h2>{exercise.title}</h2>
+        {/* Map through the exercises and display each one as a card with a link to the exercise page */}
+        {exercises.map((exercise) => {
+          const exercisePath = unitId
+            ? `/languages/${languageId}/courses/${courseId}/units/${unitId}/exercises/${exercise.id}`
+            : `/languages/${languageId}/courses/${courseId}/exercises/${exercise.id}`
 
-              {exercise.description && (
-                <p>{exercise.description}</p>
-              )}
+          return (
+            <article
+              key={exercise.id}
+              className={styles.exerciseCard}
+            >
+              <div className={styles.exerciseInfo}>
+                <h2>{exercise.title}</h2>
 
-              <p>Tipo: {exercise.type}</p>
-              <span className={styles.status}>
-                {exercise.status}
-              </span>
-            </div>
+                {exercise.description && (
+                  <p>{exercise.description}</p>
+                )}
 
-            <Link
-              to={`/exercises/${exercise.id}`}
-              className={styles.exerciseLink}>
-              Ir al ejercicio
-            </Link>
-          </article>
-        ))}
+                <p>Tipo: {exercise.type}</p>
+
+                <span className={styles.status}>
+                  {exercise.status}
+                </span>
+              </div>
+
+              <Link
+                to={exercisePath}
+                className={styles.exerciseLink}
+              >
+                Abrir ejercicio
+              </Link>
+            </article>
+          )
+        })}
       </main>
     </div>
   )
