@@ -8,7 +8,6 @@ type PageContainerProps = {
 export default function PageContainer({ children }: PageContainerProps){
     return (
         <div className={styles.pageContainer}>
-            <p>Page Container</p>
             {children}
         </div>
     )
