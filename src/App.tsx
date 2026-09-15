@@ -10,6 +10,7 @@ import CoursePage from './pages/CoursePage/CoursePage.tsx'
 import UnitsPage from './pages/UnitsPage/UnitsPage.tsx'
 import ExercisesPage from './pages/ExercisesPage/ExercisesPage.tsx'
 import ExercisePage from './pages/ExercisePage/ExercisePage.tsx'
+import ProgressPage from './pages/ProgressPage/ProgressPage.tsx'
 
 export default function App() {
 
@@ -94,6 +95,15 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="/progress"
+            element={
+              <ProtectedRoute>
+                <ProgressPage />
+              </ProtectedRoute>
+            }
+          /> 
         </Routes>
       </AppLayout>
     </>
