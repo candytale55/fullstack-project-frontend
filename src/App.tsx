@@ -11,6 +11,7 @@ import UnitsPage from './pages/UnitsPage/UnitsPage.tsx'
 import ExercisesPage from './pages/ExercisesPage/ExercisesPage.tsx'
 import ExercisePage from './pages/ExercisePage/ExercisePage.tsx'
 import ProgressPage from './pages/ProgressPage/ProgressPage.tsx'
+import NotFoundPage from './pages/NotFoundPage/NotFoundPage.tsx'
 
 export default function App() {
 
@@ -104,6 +105,11 @@ export default function App() {
               </ProtectedRoute>
             }
           /> 
+
+          <Route
+            path="*"
+            element={<NotFoundPage />}
+          />
         </Routes>
       </AppLayout>
     </>

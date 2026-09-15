@@ -1,0 +1,33 @@
+.notFoundPage {
+    width: 100%;
+    max-width: 36rem;
+    margin: var(--space-xl) auto;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+}
+
+.notFoundPage h1,
+.notFoundPage p {
+    margin: 0;
+}
+
+.code {
+    color: var(--color-text-muted);
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.homeLink {
+    padding: var(--space-sm) var(--space-md);
+
+    color: var(--color-surface);
+    background-color: var(--color-text);
+
+    border-radius: var(--border-radius-md);
+
+    text-decoration: none;
+    font-weight: 500;
+}
