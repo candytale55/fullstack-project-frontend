@@ -3,6 +3,8 @@
  * authentication state and authentication actions to its descendant components.
  */
 
+// TODO: Restore authenticated session when backend JWT integration is implemented.
+
 import {
     useState,
     type ReactNode,
