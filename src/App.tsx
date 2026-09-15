@@ -7,6 +7,7 @@ import RegisterPage from './pages/RegisterPage/RegisterPage.tsx'
 import LanguagesPage from './pages/LanguagesPage/LanguagePage.tsx'
 import CoursesPage from './pages/CoursesPage/CoursesPage.tsx'
 import CoursePage from './pages/CoursePage/CoursePage.tsx'
+import UnitsPage from './pages/UnitsPage/UnitsPage.tsx'
 
 export default function App() {
 
@@ -47,7 +48,15 @@ export default function App() {
               <ProtectedRoute>
                 <CoursePage />
               </ProtectedRoute>
-            }/>
+            } />
+          <Route />
+          <Route
+            path="/languages/:languageId/courses/:courseId/units"
+            element={
+              <ProtectedRoute>
+                <UnitsPage />
+              </ProtectedRoute>
+            } />
           
         </Routes>
       </AppLayout>
