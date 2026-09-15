@@ -9,6 +9,7 @@ import CoursesPage from './pages/CoursesPage/CoursesPage.tsx'
 import CoursePage from './pages/CoursePage/CoursePage.tsx'
 import UnitsPage from './pages/UnitsPage/UnitsPage.tsx'
 import ExercisesPage from './pages/ExercisesPage/ExercisesPage.tsx'
+import ExercisePage from './pages/ExercisePage/ExercisePage.tsx'
 
 export default function App() {
 
@@ -72,6 +73,24 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <ExercisesPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/languages/:languageId/courses/:courseId/units/:unitId/exercises/:exerciseId"
+            element={
+              <ProtectedRoute>
+                <ExercisePage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/languages/:languageId/courses/:courseId/exercises/:exerciseId"
+            element={
+              <ProtectedRoute>
+                <ExercisePage />
               </ProtectedRoute>
             }
           />

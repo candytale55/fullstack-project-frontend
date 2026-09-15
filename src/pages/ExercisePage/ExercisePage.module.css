@@ -1,0 +1,40 @@
+.exercisePage {
+    width: 100%;
+    max-width: 48rem;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.header h1,
+.header p {
+    margin: 0;
+}
+
+.header p {
+    color: var(--color-text-muted);
+}
+
+.exerciseContent {
+    padding: var(--space-lg);
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+
+    background-color: var(--color-surface);
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+}
+
+.exerciseContent p {
+    margin: 0;
+}
