@@ -1,6 +1,6 @@
 # Notas de desarrollo
 
-## Plan inicial del frontend
+## Plan de Desarrollo
 
 El frontend se desarrolla con **React + TypeScript + Vite** y utiliza **CSS Modules con CSS estándar**. La prioridad inicial es construir un MVP funcional, sencillo de mantener y fácil de ampliar, evitando crear componentes o abstracciones antes de que exista una necesidad real de reutilización.
 
@@ -50,7 +50,14 @@ Para ampliar la información sobre esta etapa, consultar [Etapa 1 - Notas de des
 
 ### Etapa 2 - Modelado de datos y API básica
 
-Definición de los modelos y relaciones necesarias en el backend para soportar la jerarquía `Language → Course → Unit → Exercise → Progress`, junto con los endpoints mínimos para consultar y gestionar estos datos. También se prepararán seeds o datos iniciales para poder probar la API de forma sencilla.
+Durante esta etapa se definió la estructura principal de datos del backend y las relaciones necesarias para soportar el contenido de la aplicación.
+
+Se implementaron los modelos `Language`, `Course`, `VocabularyItem`, `Exercise` y `Progress`, además del modelo `User` ya existente. Las unidades se integraron como subdocumentos dentro de los cursos para mantener el modelo del MVP sencillo.
+
+También se crearon los controllers y rutas principales para consultar y gestionar estas colecciones. El backend cuenta además con registro, login, hashing de contraseñas, JWT y middlewares para proteger rutas y controlar el acceso de administradores.
+
+Los modelos de vocabulario y ejercicios quedan sujetos a una revisión final antes de realizar la carga definitiva de datos. La siguiente tarea pendiente relacionada con esta etapa es preparar el Excel/CSV de vocabulario con más de 100 registros y crear la semilla correspondiente para generar los datos iniciales de la base de datos.
+
 
 ### Etapa 3 - Integración frontend-backend
 

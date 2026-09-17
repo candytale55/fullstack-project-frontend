@@ -17,7 +17,7 @@ El proyecto debe utilizar los conocimientos adquiridos durante el curso para des
 
 **Cumplimiento:** Parcial.
 
-El proyecto tiene un propósito definido: crear una aplicación para el aprendizaje de idiomas mediante cursos, unidades y ejercicios, permitiendo además consultar el progreso del usuario. La arquitectura funcional ya se ha diseñado alrededor de este objetivo.
+El proyecto tiene un propósito definido: crear una aplicación para el aprendizaje de idiomas mediante cursos, unidades y ejercicios, permitiendo además consultar el progreso del usuario. La arquitectura funcional y el modelo de datos se han diseñado alrededor de este objetivo.
 
 <!-- //TODO: Todavía debe ampliarse la documentación del público objetivo y de la necesidad concreta que pretende resolver antes de considerar completamente cerrado este requisito. -->
 
@@ -25,8 +25,10 @@ El proyecto tiene un propósito definido: crear una aplicación para el aprendiz
 
 * Arquitectura de contenido definida como `Language → Course → Unit → Exercise`.
 * Soporte para cursos estructurados por unidades y cursos que contienen ejercicios directamente.
+* Modelos de datos relacionados para idiomas, cursos, vocabulario, ejercicios y progreso.
 * `DashboardPage`, `LanguagesPage`, `CoursesPage`, `CoursePage`, `UnitsPage`, `ExercisesPage`, `ExercisePage` y `ProgressPage`.
 * `README.md` del frontend.
+* `README.md` del backend.
 * `notas_desarrollo.md`.
 * `notas/etapa-1-notas-desarrollo.md`.
 
@@ -139,26 +141,29 @@ Se ha establecido una estructura clara basada en CSS Modules, estilos globales y
 * Las relaciones deben utilizar datos o identificadores que permitan vincular los documentos correspondientes.
 * Los modelos de las colecciones deben estar definidos en el backend antes de realizar la carga de datos.
 
-**Cumplimiento:** Pendiente.
+**Cumplimiento:** Cumplido.
 
-Actualmente existe el modelo de usuario en el backend, pero todavía no se han implementado los modelos definitivos correspondientes a la estructura de contenido del proyecto.
+Además de la colección de usuarios, el backend dispone de modelos para idiomas, cursos, vocabulario, ejercicios y progreso. Estas colecciones están relacionadas mediante referencias `ObjectId` de Mongoose.
 
-La arquitectura prevista contempla varias entidades relacionadas (`Language`, `Course`, `Unit`, `Exercise` y `Progress`), pero no se considerará cumplido este requisito hasta que las colecciones y sus relaciones existan realmente en MongoDB.
+`Course` referencia a `Language`. Las unidades se encuentran embebidas como subdocumentos dentro de `Course`. `VocabularyItem` y `Exercise` referencian al curso correspondiente y pueden asociarse opcionalmente a una unidad mediante su identificador. Los ejercicios pueden referenciar elementos de vocabulario y `Progress` relaciona usuarios, cursos y ejercicios completados.
 
-**Evidencia actual:**
+**Evidencia:**
 
-* Modelo `User` implementado en el backend.
-* Arquitectura de datos prevista documentada como:
-
-```text
-Language
-└── Course
-    ├── Unit
-    │   └── Exercise
-    └── Exercise
-```
-
-* Implementación de los modelos adicionales pendiente.
+* `User.model.ts`.
+* `Language.model.ts`.
+* `Course.model.ts`.
+* `Vocabulary.model.ts`.
+* `Exercise.model.ts`.
+* `Progress.model.ts`.
+* Relación `Course.language → Language`.
+* Relación `VocabularyItem.course → Course`.
+* Relación `Exercise.course → Course`.
+* Relación `Exercise.vocabularyItems → VocabularyItem`.
+* Relación `Progress.user → User`.
+* Relación `Progress.course → Course`.
+* Relación `Progress.completedExercises → Exercise`.
+* `Unit` implementado como subdocumento dentro de `Course`.
+* Índice compuesto único en `Progress` para impedir más de un registro de progreso por usuario y curso.
 
 ---
 
@@ -295,14 +300,20 @@ Los componentes específicos del dominio se extraerán únicamente cuando la rep
 * Los modelos correspondientes deben existir antes de ejecutar las semillas.
 * La información importada debe mantener correctamente las relaciones necesarias entre las colecciones.
 
-**Cumplimiento:** Pendiente.
+**Cumplimiento:** Parcial.
 
-La estructura de datos definitiva del backend se encuentra todavía en desarrollo. Este requisito se realizará después de definir los modelos y relaciones correspondientes.
+Los modelos y relaciones necesarios para realizar la carga de datos ya se encuentran definidos en el backend. También existe una estructura de semillas en `src/utils/seeds/`, utilizada actualmente para crear usuarios de prueba.
+
+La carga principal de datos mediante Excel/CSV todavía está pendiente. Se utilizará el vocabulario disponible como conjunto principal de datos, con un mínimo de 100 registros, y se preparará la semilla correspondiente una vez terminada la revisión del modelo de vocabulario.
 
 **Evidencia:**
 
-* Pendiente de implementación.
-* Antes de realizar la carga deberán existir los modelos definitivos de las colecciones implicadas.
+* Modelos `Language`, `Course`, `VocabularyItem`, `Exercise` y `Progress` creados antes de realizar la carga.
+* Relaciones entre colecciones definidas mediante `ObjectId`.
+* Directorio `src/utils/seeds/`.
+* `user.seed.ts` como primera implementación de seed.
+* Dataset de vocabulario disponible para preparar el Excel/CSV de más de 100 registros.
+* Pendiente la lectura del Excel/CSV mediante `fs` y la semilla definitiva del vocabulario.
 
 ---
 
@@ -343,19 +354,30 @@ El backend debe incluir una colección de usuarios independientemente de la tem�
 * Existencia de rutas cuyo acceso dependa de que el usuario esté autenticado.
 * Cuando el proyecto utilice roles, posibilidad de limitar determinadas rutas según el rol del usuario.
 
-**Cumplimiento:** Parcial.
+**Cumplimiento:** Cumplido.
 
-El backend ya dispone del modelo de usuario. En el frontend existe además una primera implementación funcional del estado de autenticación y del control de rutas mediante Context y `ProtectedRoute`.
+El backend dispone de una colección de usuarios, registro y login mediante rutas de autenticación, hashing de contraseñas mediante `bcrypt` y generación y validación de JWT.
 
-La autenticación del frontend continúa utilizando un usuario mock, por lo que todavía debe integrarse con el sistema real del backend y con JWT antes de considerar completamente cumplido el requisito.
+El middleware `isAuth` comprueba el token recibido, obtiene el usuario autenticado y lo añade a `req.user`. El middleware `isAdmin` permite restringir rutas según el rol del usuario. Las rutas de gestión de usuarios están protegidas mediante estos middlewares.
+
+La integración de esta autenticación real con el frontend se realizará en la siguiente etapa de desarrollo.
 
 **Evidencia:**
 
 Backend:
 
 * Modelo `User`.
-* Campo `role` preparado para diferenciar usuarios.
-* CRUD inicial de usuarios.
+* Campo `role` con valores `user` y `admin`.
+* Hash de contraseñas mediante middleware `pre("save")` y `bcrypt`.
+* `auth.controller.ts`.
+* `auth.routes.ts`.
+* `POST /api/v1/auth/register`.
+* `POST /api/v1/auth/login`.
+* Generación y verificación de JWT en `utils/jwt.ts`.
+* Middleware `isAuth`.
+* Middleware `isAdmin`.
+* Rutas de usuarios protegidas mediante autenticación y rol.
+* Pruebas manuales de autenticación y usuarios en la colección de Insomnia.
 
 Frontend:
 
@@ -365,8 +387,6 @@ Frontend:
 * `ProtectedRoute.tsx`.
 * `LoginPage` y `LoginForm`.
 * `RegisterPage` y `RegisterForm`.
-* Redirección de usuarios no autenticados hacia `/login`.
-* `logout()` elimina el usuario actual y devuelve al usuario a `/login`.
 
 ---
 
@@ -383,7 +403,7 @@ Se debe crear documentación que explique detalladamente el sentido del proyecto
 
 **Cumplimiento:** Parcial.
 
-Existen README iniciales separados para frontend y backend y documentación adicional sobre el desarrollo. El README del frontend explica actualmente el objetivo general, responsabilidades y tecnologías utilizadas.
+Existen README iniciales separados para frontend y backend y documentación adicional sobre el desarrollo. Ambos README explican actualmente el objetivo general, responsabilidades principales y tecnologías utilizadas.
 
 Todavía debe ampliarse la documentación final para explicar de forma más detallada el problema que resuelve la aplicación y su público objetivo.
 
