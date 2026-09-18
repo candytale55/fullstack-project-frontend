@@ -1,28 +1,37 @@
 /*
- * AuthProvider is the component responsible for storing and providing the application's
- * authentication state and authentication actions to its descendant components.
+ * AuthProvider is the component responsible for storing and providing the application's authentication state and authentication actions to its descendant components.
  */
 
-// TODO: Restore authenticated session when backend JWT integration is implemented.
-
-import {
-    useState,
-    type ReactNode,
-} from "react"
-
+import { useState, type ReactNode, } from "react"
 import { AuthContext } from "./AuthContext"
 
+import {
+  login as loginRequest,
+  register as registerRequest,
+} from '../services/authService' // Alias to avoid direct naming conflicts with local functions
 
 import type {
+    ApiUser,
     AuthUser,
     LoginCredentials,
     RegisterData,
-} from "../types/auth"
+} from '../types/auth'
 
 
 type AuthProviderProps = {
     children: ReactNode
 }
+
+
+
+const mapApiUser = (
+    apiUser: ApiUser
+): AuthUser => ({
+    id: apiUser._id, // Map the backend's _id field to the frontend's id field
+    name: apiUser.name,
+    email: apiUser.email,
+    role: apiUser.role,
+})
 
 export function AuthProvider({ children }: AuthProviderProps) {
     // Keep the authenticated user here so all app sections read the same source of truth.
@@ -32,32 +41,33 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const login = async (credentials: LoginCredentials) => {
         // Temporary development shortcut: useful while the backend endpoint is not ready.
         // The app can still flow through the login UI without failing on missing API wiring.
-        console.log('Login credentials:', credentials)
+        const response = await loginRequest(credentials)
+        // loginRequest handles the login API call. It should return the authenticated user's data.
 
-        // TODO: Replace this mock with a real auth service call once backend auth is implemented.
-        setUser({
-            id: 'temp-id',
-            name: credentials.name ?? credentials.email, // Fallback to email if name is not provided
-            email: credentials.email,
-        })
+        localStorage.setItem(
+            'authToken',
+            response.token) // Assuming the response contains a token field for authentication
+  
+        setUser(
+            mapApiUser(response.user)
+        )
     }
 
-    const register = async (data: RegisterData) => {
-        // This keeps the registration form usable during early development and makes the
-        // rest of the app able to react as if a session was created.
-        console.log('Register data:', data)
+  const register = async (
+    data: RegisterData) => {
+        // This keeps the registration form usable during early development and makes the rest of the app able to react as if a session was created.
 
-        // TODO: Temporary development shortcut: replace this mock with a real registration request once the backend is available.
-        setUser({
-            id: "temp-id",
-            name: data.name,
-            email: data.email,
-        })
-    }
+    await registerRequest(data);
+
+  }
+
+
+
 
     const logout = () => {
-        // Clearing the user here invalidates the session for all consumers immediately.
-        setUser(null)
+      // Clearing the user here invalidates the session for all consumers immediately.
+      localStorage.removeItem('authToken')
+      setUser(null)
     }
 
     return (
@@ -77,4 +87,3 @@ export function AuthProvider({ children }: AuthProviderProps) {
     )
 }
 
-// TODO: Move the mock login/register behavior into a dedicated auth service and hook the context up to the real backend once the API contract is confirmed.

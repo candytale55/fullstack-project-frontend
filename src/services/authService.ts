@@ -1,25 +1,95 @@
-import type { LoginCredentials } from '../types/auth'
+// Service for handling authentication-related API calls
+
+import type {
+  AuthResponse,
+  CurrentUserResponse,
+  LoginCredentials,
+  RegisterData,
+  RegisterResponse,
+} from '../types/auth'
+
 
 const API_URL = import.meta.env.VITE_API_URL
 
-// Service for handling authentication-related API calls
-export async function login(credentials: LoginCredentials) { 
-    const response = await fetch(`${API_URL}/api/v1/login`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(credentials)
-    })
+/* ========= LOGIN ========= */
 
-    
-    const data: unknown = await response.json()
-    // TODO: We don't yet know the exact TypeScript shape returned by the current backend. Once backend controller is working will create the LoginResponse type.
-    // const data: LoginResponse = await response.json()
+export async function login(
+  credentials: LoginCredentials
+): Promise<AuthResponse> {
 
-    if (!response.ok) {
-        throw new Error('Login failed')
+  const response = await fetch(
+    `${API_URL}/api/v1/auth/login`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(credentials)
     }
+  )
 
-    return data
+  const data = await response.json()
+
+  if (!response.ok) {
+    throw new Error(
+      data.message || 'Login failed'
+    )
+  }
+
+  return data
+}
+
+
+/* ========= REGISTER USER ========= */
+
+export async function register(
+  registerData: RegisterData
+): Promise<RegisterResponse> {
+
+  const response = await fetch(
+    `${API_URL}/api/v1/auth/register`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(registerData)
+    }
+  )
+
+  const data = await response.json()
+
+  if (!response.ok) {
+    throw new Error(
+      data.message || 'Registration failed'
+    )
+  }
+
+  return data
+}
+
+/* ========= CURRENT USER ========= */
+
+export async function getCurrentUser(
+  token: string
+): Promise<CurrentUserResponse> {
+
+  const response = await fetch(
+    `${API_URL}/api/v1/auth/me`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  )
+
+  const data = await response.json()
+
+  if (!response.ok) {
+    throw new Error(
+      data.message || 'Failed to restore session'
+    )
+  }
+
+  return data
 }
