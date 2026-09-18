@@ -63,6 +63,9 @@ Los modelos de vocabulario y ejercicios quedan sujetos a una revisión final ant
 
 Sustitución progresiva de los mocks por datos reales mediante una capa de servicios en el frontend. Se conectarán primero autenticación y usuario, y después idiomas, cursos, unidades y ejercicios, manteniendo los componentes desacoplados de las llamadas directas a la API.
 
+Las reglas para la colección de vocabulario generada a partir del Excel puede consultarse [aqui](./notas/etapa-3-reglas-vocabulario.md) 
+<!-- //TODO: Temp. Link, Integrate it more naturally when ETAPA 3 is completed -->
+
 ### Etapa 4 - Ejercicios y seguimiento de progreso
 
 Implementación de al menos un tipo de ejercicio funcional del MVP y del flujo necesario para registrar sus resultados. El backend almacenará la información necesaria de progreso y el frontend la utilizará para actualizar `DashboardPage` y `ProgressPage`.
