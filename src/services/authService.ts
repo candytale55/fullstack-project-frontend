@@ -1,4 +1,10 @@
-// Service for handling authentication-related API calls
+/*
+ * src/services/authService.ts
+ *
+ * AuthProvider -> authService -> backend authentication endpoints.
+ * This module only handles HTTP requests; session state and token storage
+ * remain the responsibility of AuthProvider.
+ */
 
 import type {
   AuthResponse,
@@ -11,6 +17,7 @@ import type {
 
 const API_URL = import.meta.env.VITE_API_URL
 
+
 /* ========= LOGIN ========= */
 
 export async function login(
@@ -22,9 +29,9 @@ export async function login(
     {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(credentials)
+      body: JSON.stringify(credentials),
     }
   )
 
@@ -40,7 +47,7 @@ export async function login(
 }
 
 
-/* ========= REGISTER USER ========= */
+/* ========= REGISTER ========= */
 
 export async function register(
   registerData: RegisterData
@@ -51,9 +58,9 @@ export async function register(
     {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(registerData)
+      body: JSON.stringify(registerData),
     }
   )
 
@@ -68,6 +75,7 @@ export async function register(
   return data
 }
 
+
 /* ========= CURRENT USER ========= */
 
 export async function getCurrentUser(
@@ -78,8 +86,8 @@ export async function getCurrentUser(
     `${API_URL}/api/v1/auth/me`,
     {
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     }
   )
 

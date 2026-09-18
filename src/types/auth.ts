@@ -1,40 +1,39 @@
-/* Authentication-related types */
+/*
+ * src/types/auth.ts
+ *
+ * Shared authentication contracts.
+ * Forms/AuthProvider use request types -> authService sends them to the backend
+ * -> backend response types are normalized by AuthProvider for the UI.
+ */
 
 
-// Normalized profile after a successful session.
+// User shape used throughout the frontend after authentication.
 export type AuthUser = {
   id: string
   name: string
   email: string
-  role?: 'user' | 'admin'
+  role: 'user' | 'admin'
 }
 
-/* ================================== */
 
-// Shape returned directly by MongoDB/backend
-
-// Decodes the backend user entity into a shape that can be safely consumed by the frontend.
-
+// User shape returned by the backend.
+// AuthProvider maps `_id` to the frontend-friendly `id`.
 export type ApiUser = {
   _id: string
   name: string
   email: string
-  role?: 'user' | 'admin'
+  role: 'user' | 'admin'
 }
 
 
-/* ================================== */
-
-// Provides the minimal payload the UI can send to authenticate without forcing a duplicate profile shape.
+// Payload accepted by the login endpoint.
 export type LoginCredentials = {
   email: string
   password: string
 }
 
 
-/* ================================== */
-
-// Represents the information the app needs to create a fresh account before sending it to the backend.
+// Payload accepted by the registration endpoint.
 export type RegisterData = {
   name: string
   email: string
@@ -42,29 +41,21 @@ export type RegisterData = {
 }
 
 
-
-/* ================================== */
-// Login returns a JWT
-// Wraps the token and profile returned from a successful auth request so the app can store the session in one step.
+// Successful login response. Login creates the authenticated session.
 export type AuthResponse = {
   user: ApiUser
   token: string
 }
 
 
-/* ================================== */
-
-// Register does NOT log the user in
+// Registration creates the account but does not authenticate the user.
 export type RegisterResponse = {
   message: string
   user: ApiUser
 }
 
-/* ================================== */
 
-// Used by GET auth/me to fetch the current authenticated user's profile.
-// Keeps the current-user fetch response consistent with the rest of the auth contract without duplicating the user fields.
-
+// Response used to restore the authenticated user from an existing JWT.
 export type CurrentUserResponse = {
   user: ApiUser
 }

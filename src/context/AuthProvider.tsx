@@ -1,89 +1,98 @@
 /*
- * AuthProvider is the component responsible for storing and providing the application's authentication state and authentication actions to its descendant components.
+ * src/context/AuthProvider.tsx
+ *
+ * Components/useAuth -> AuthProvider actions -> authService -> backend.
+ * AuthProvider owns the frontend session, stores the JWT and normalizes
+ * backend users before exposing them through AuthContext.
  */
 
-import { useState, type ReactNode, } from "react"
-import { AuthContext } from "./AuthContext"
+import {
+  useState,
+  type ReactNode,
+} from 'react'
+
+import { AuthContext } from './AuthContext'
 
 import {
   login as loginRequest,
   register as registerRequest,
-} from '../services/authService' // Alias to avoid direct naming conflicts with local functions
+} from '../services/authService'
 
 import type {
-    ApiUser,
-    AuthUser,
-    LoginCredentials,
-    RegisterData,
+  ApiUser,
+  AuthUser,
+  LoginCredentials,
+  RegisterData,
 } from '../types/auth'
 
 
 type AuthProviderProps = {
-    children: ReactNode
+  children: ReactNode
 }
 
 
-
+// Keeps MongoDB-specific `_id` outside the rest of the frontend.
 const mapApiUser = (
-    apiUser: ApiUser
+  apiUser: ApiUser
 ): AuthUser => ({
-    id: apiUser._id, // Map the backend's _id field to the frontend's id field
-    name: apiUser.name,
-    email: apiUser.email,
-    role: apiUser.role,
+  id: apiUser._id,
+  name: apiUser.name,
+  email: apiUser.email,
+  role: apiUser.role,
 })
 
-export function AuthProvider({ children }: AuthProviderProps) {
-    // Keep the authenticated user here so all app sections read the same source of truth.
-    // A null value represents an unauthenticated session.
-    const [user, setUser] = useState<AuthUser | null>(null)
 
-    const login = async (credentials: LoginCredentials) => {
-        // Temporary development shortcut: useful while the backend endpoint is not ready.
-        // The app can still flow through the login UI without failing on missing API wiring.
-        const response = await loginRequest(credentials)
-        // loginRequest handles the login API call. It should return the authenticated user's data.
+export function AuthProvider({
+  children,
+}: AuthProviderProps) {
 
-        localStorage.setItem(
-            'authToken',
-            response.token) // Assuming the response contains a token field for authentication
-  
-        setUser(
-            mapApiUser(response.user)
-        )
-    }
+  // null represents a user without an active authenticated session.
+  const [user, setUser] =
+    useState<AuthUser | null>(null)
 
-  const register = async (
-    data: RegisterData) => {
-        // This keeps the registration form usable during early development and makes the rest of the app able to react as if a session was created.
 
-    await registerRequest(data);
+  const login = async (
+    credentials: LoginCredentials
+  ) => {
+    const response =
+      await loginRequest(credentials)
 
+    localStorage.setItem(
+      'authToken',
+      response.token
+    )
+
+    setUser(
+      mapApiUser(response.user)
+    )
   }
 
 
+  const register = async (
+    data: RegisterData
+  ) => {
+    // Registration creates the account only; LoginPage starts the session.
+    await registerRequest(data)
+  }
 
 
-    const logout = () => {
-      // Clearing the user here invalidates the session for all consumers immediately.
-      localStorage.removeItem('authToken')
-      setUser(null)
-    }
+  const logout = () => {
+    localStorage.removeItem('authToken')
+    setUser(null)
+  }
 
-    return (
-        <AuthContext.Provider
-            value={{
-                user,
-                // Double-negation converts a user object into a boolean that mirrors the
-                // authentication status for the whole app.
-                isAuthenticated: !!user,
-                login,
-                register,
-                logout,
-            }}
-        >
-            {children}
-        </AuthContext.Provider>
-    )
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated: !!user,
+        login,
+        register,
+        logout,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  )
 }
-
