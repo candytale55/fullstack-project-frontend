@@ -8,12 +8,14 @@
 
 import {
   useState,
+  useEffect,
   type ReactNode,
 } from 'react'
 
 import { AuthContext } from './AuthContext'
 
 import {
+  getCurrentUser,
   login as loginRequest,
   register as registerRequest,
 } from '../services/authService'
@@ -25,6 +27,7 @@ import type {
   RegisterData,
 } from '../types/auth'
 
+/* ===================================== */
 
 type AuthProviderProps = {
   children: ReactNode
@@ -41,6 +44,7 @@ const mapApiUser = (
   role: apiUser.role,
 })
 
+/* ===================================== */
 
 export function AuthProvider({
   children,
@@ -49,7 +53,30 @@ export function AuthProvider({
   // null represents a user without an active authenticated session.
   const [user, setUser] =
     useState<AuthUser | null>(null)
+  
+  
+  useEffect(() => { 
+    const restoreSession = async () => {
+      const token = localStorage.getItem('authToken')
 
+      if (!token) {
+        return
+      }
+
+      try {
+        const response = await getCurrentUser(token)
+
+        setUser(mapApiUser(response.user))
+        
+      } catch {
+        localStorage.removeItem('authToken')
+        setUser(null)
+      }
+    }
+    restoreSession()
+  }, [])
+  
+  /* -------------------------------- */
 
   const login = async (
     credentials: LoginCredentials
@@ -67,6 +94,7 @@ export function AuthProvider({
     )
   }
 
+  /* -------------------------------- */
 
   const register = async (
     data: RegisterData
@@ -75,12 +103,14 @@ export function AuthProvider({
     await registerRequest(data)
   }
 
+  /* -------------------------------- */
 
   const logout = () => {
     localStorage.removeItem('authToken')
     setUser(null)
   }
-
+  
+  /* -------------------------------- */
 
   return (
     <AuthContext.Provider
