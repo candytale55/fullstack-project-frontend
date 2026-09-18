@@ -18,6 +18,7 @@ import type {
 type AuthContextType = {
     user: AuthUser | null
     isAuthenticated: boolean
+    isAuthLoading: boolean
 
     login: (
         credentials: LoginCredentials

@@ -56,7 +56,7 @@ export function AuthProvider({
   
   const [ isAuthLoading, setIsAuthLoading ] = useState(true)
   
-  useEffect(() => { 
+  useEffect(() => {
     const restoreSession = async () => {
       const token = localStorage.getItem('authToken')
 
@@ -68,13 +68,19 @@ export function AuthProvider({
       try {
         const response = await getCurrentUser(token)
 
-        setUser(mapApiUser(response.user))
-        
+        setUser(
+          mapApiUser(response.user)
+        )
+
       } catch {
         localStorage.removeItem('authToken')
         setUser(null)
+
+      } finally {
+        setIsAuthLoading(false)
       }
     }
+
     restoreSession()
   }, [])
 
@@ -120,6 +126,7 @@ export function AuthProvider({
       value={{
         user,
         isAuthenticated: !!user,
+        isAuthLoading,
         login,
         register,
         logout,
