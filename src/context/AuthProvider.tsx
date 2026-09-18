@@ -54,12 +54,14 @@ export function AuthProvider({
   const [user, setUser] =
     useState<AuthUser | null>(null)
   
+  const [ isAuthLoading, setIsAuthLoading ] = useState(true)
   
   useEffect(() => { 
     const restoreSession = async () => {
       const token = localStorage.getItem('authToken')
 
       if (!token) {
+        setIsAuthLoading(false)
         return
       }
 
@@ -75,6 +77,7 @@ export function AuthProvider({
     }
     restoreSession()
   }, [])
+
   
   /* -------------------------------- */
 
