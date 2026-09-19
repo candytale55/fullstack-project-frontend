@@ -5,7 +5,7 @@
  * to the backend. (Changed to include nativeName property)
  */
 
-import type { Language } from '../types/language'
+import type { Language } from '../../../src/types/language'
 
 
 export const languagesMock: Language[] = [
