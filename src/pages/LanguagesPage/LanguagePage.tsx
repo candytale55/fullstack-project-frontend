@@ -69,8 +69,8 @@ export default function LanguagesPage() {
             className={styles.languageCard}
           >
             <div>
-              <h2>{language.name}</h2>
-              <p>{language.nativeName}</p>
+              <h2>{language.nativeName}</h2>
+              <p>{language.name}</p>
             </div>
 
             <Link
