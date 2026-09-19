@@ -70,6 +70,24 @@ const mapApiCourse = (
 })
 
 
+// Fetches one course by its MongoDB id.
+export async function getCourseById(
+    courseId: string
+): Promise<Course> {
+    const response = await fetch(
+        `${API_URL}/api/v1/courses/${courseId}`
+    )
+
+    if (!response.ok) {
+        throw new Error('Failed to load course')
+    }
+
+    const data: ApiCourse =
+        await response.json()
+
+    return mapApiCourse(data)
+}
+
 // Fetches all courses belonging to a language.
 export async function getCoursesByLanguage(
     languageId: string

@@ -1,6 +1,6 @@
 import { useParams } from "react-router"
 
-import { coursesMock } from "../../../docs/notas/mocks/coursesMock"
+import { coursesMock } from "../../mocks/coursesMock"
 import { unitsMock } from "../../mocks/unitsMock"
 import { exercisesMock } from "../../mocks/exercisesMock"
 
