@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router'
 
-import { coursesMock } from '../../mocks/coursesMock'
+import { coursesMock } from '../../../docs/notas/mocks/coursesMock'
 import { unitsMock } from '../../mocks/unitsMock'
 import { exercisesMock } from '../../mocks/exercisesMock'
 
@@ -20,15 +20,15 @@ export default function ExercisesPage() {
     (course) => course.id === courseId &&
       course.languageId === languageId
   )
-  
+
   // If unitId is provided, find it based on the unitId and courseId
   const unit = unitId
     ? unitsMock.find(
-        (unit) => unit.id === unitId &&
-          unit.courseId === courseId
-      )
+      (unit) => unit.id === unitId &&
+        unit.courseId === courseId
+    )
     : undefined
-  
+
   const exercises = exercisesMock.filter(
     (exercise) => {
       if (unitId) { // If unitId is provided, filter by courseId and unitId
@@ -42,7 +42,7 @@ export default function ExercisesPage() {
         exercise.unitId === undefined
       )
     }).sort((a, b) => a.order - b.order) // Sort by their order within the unit or course
-  
+
   console.log(exercises) // TODO: Remove this log before deploying
 
   if (!course) {
@@ -54,7 +54,7 @@ export default function ExercisesPage() {
   }
 
   // If a unitId is provided but the unit is not found, show an error message
-  if (unitId && !unit) { 
+  if (unitId && !unit) {
     return (
       <div className={styles.exercisesPage}>
         <h1>Unidad no encontrada</h1>

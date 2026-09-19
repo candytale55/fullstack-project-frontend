@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router'
 import styles from './CoursePage.module.css'
 
-import { coursesMock } from '../../mocks/coursesMock.ts'
+import { coursesMock } from '../../../docs/notas/mocks/coursesMock.ts'
 
 export default function CoursePage() {
 

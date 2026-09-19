@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router'
 
-import { coursesMock } from '../../mocks/coursesMock'
+import { coursesMock } from '../../../docs/notas/mocks/coursesMock'
 import { unitsMock } from '../../mocks/unitsMock'
 
 import styles from './UnitsPage.module.css'

@@ -1,15 +1,66 @@
+/*
+ * src/pages/CoursesPage/CoursesPage.tsx
+ *
+ * Loads courses for the selected language through courseService.
+ * Each course id is used to navigate to its course content.
+ */
+
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 
-import { coursesMock } from '../../mocks/coursesMock'
+import { getCoursesByLanguage } from '../../services/courseService'
+import type { Course } from '../../types/course'
+
+import Alert from '../../components/ui/Alert/Alert'
+import Loader from '../../components/ui/Loader/Loader'
 
 import styles from './CoursesPage.module.css'
+
 
 export default function CoursesPage() {
     const { languageId } = useParams()
 
-    const courses = coursesMock.filter(
-        (course) => course.languageId === languageId
-    )
+    const [courses, setCourses] = useState<Course[]>([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState('')
+
+
+    useEffect(() => {
+        const loadCourses = async () => {
+            if (!languageId) {
+                setError('Language not found')
+                setLoading(false)
+                return
+            }
+
+            try {
+                const data =
+                    await getCoursesByLanguage(languageId)
+
+                setCourses(data)
+            } catch (error) {
+                setError(
+                    error instanceof Error
+                        ? error.message
+                        : 'Failed to load courses'
+                )
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        loadCourses()
+    }, [languageId])
+
+
+    if (loading) {
+        return <Loader />
+    }
+
+    if (error) {
+        return <Alert>{error}</Alert>
+    }
+
 
     return (
         <div className={styles.coursesPage}>
@@ -46,7 +97,9 @@ export default function CoursesPage() {
                         </div>
 
                         <Link
-                            to={`/languages/${languageId}/courses/${course.id}`}>
+                            to={`/languages/${languageId}/courses/${course.id}`}
+                            className={styles.courseLink}
+                        >
                             Ver curso
                         </Link>
                     </article>

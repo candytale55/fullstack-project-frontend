@@ -1,4 +1,4 @@
-import type { Course } from '../types/course'
+/* import type { Course } from '../../../src/types/course'
 
 export const coursesMock: Course[] = [
     {
@@ -27,4 +27,4 @@ export const coursesMock: Course[] = [
         structure: 'units',
         contentCount: 10,
     }
-]
+] */

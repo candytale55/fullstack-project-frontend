@@ -1,12 +1,12 @@
 import { useParams } from "react-router"
 
-import { coursesMock } from "../../mocks/coursesMock"
+import { coursesMock } from "../../../docs/notas/mocks/coursesMock"
 import { unitsMock } from "../../mocks/unitsMock"
 import { exercisesMock } from "../../mocks/exercisesMock"
 
 import styles from "./ExercisePage.module.css"
 
-export default function ExercisePage() { 
+export default function ExercisePage() {
 
     const {
         languageId,
@@ -16,7 +16,7 @@ export default function ExercisePage() {
     } = useParams()
 
     const course = coursesMock.find(
-        (course) => 
+        (course) =>
             course.id === courseId &&
             course.languageId === languageId
     )
@@ -26,8 +26,8 @@ export default function ExercisePage() {
             (unit) =>
                 unit.id === unitId &&
                 unit.courseId === courseId
-        ): undefined
-        
+        ) : undefined
+
     const exercise = exercisesMock.find(
         (exercise) =>
             exercise.id === exerciseId &&
@@ -41,15 +41,15 @@ export default function ExercisePage() {
     if (!course) {
         return (
             <div className={styles.exercisePage}>
-                <h1>Curso no encontrado</h1>            
+                <h1>Curso no encontrado</h1>
             </div>
         )
     }
-    
+
     if (unitId && !unit) {
         return (
             <div className={styles.exercisePage}>
-                <h1>Unidad no encontrada</h1>            
+                <h1>Unidad no encontrada</h1>
             </div>
         )
     }
@@ -57,7 +57,7 @@ export default function ExercisePage() {
     if (!exercise) {
         return (
             <div className={styles.exercisePage}>
-                <h1>Ejercicio no encontrado</h1>            
+                <h1>Ejercicio no encontrado</h1>
             </div>
         )
     }
