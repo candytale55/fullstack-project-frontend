@@ -58,23 +58,6 @@
     color: var(--color-text-muted);
 }
 
-.unitHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: var(--space-md);
-}
-
-.status {
-    padding: var(--space-xs) var(--space-sm);
-
-    background-color: var(--color-background);
-    border-radius: var(--border-radius-sm);
-
-    color: var(--color-text-muted);
-    font-size: 0.875rem;
-}
-
 .exerciseLink {
     align-self: flex-start;
 

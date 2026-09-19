@@ -1,13 +1,18 @@
 /*
  * src/services/courseService.ts
  *
- * CoursesPage -> courseService -> backend course endpoints.
- * Backend course documents and embedded units are normalized before reaching the UI.
+ * Handles communication with backend course endpoints.
+ * CoursesPage and CoursePage use this service to load course data,
+ * while UnitsPage uses it to load the units embedded in a course.
+ *
+ * Backend course documents and embedded units are normalized here
+ * before reaching the UI, including `_id -> id`.
  */
 
 import type {
     Course,
     CourseStructure,
+    CourseUnit
 } from '../types/course'
 
 const API_URL = import.meta.env.VITE_API_URL
@@ -43,8 +48,18 @@ type ApiCourse = {
     units: ApiUnit[]
 }
 
+// Maps one backend unit to the frontend CourseUnit type.
+const mapApiUnit = (
+    unit: ApiUnit
+): CourseUnit => ({
+    id: unit._id,
+    code: unit.code,
+    title: unit.title,
+    description: unit.description,
+    order: unit.order,
+})
 
-// Maps a backend course document to the frontend Course type.
+// Maps one backend course to the frontend Course type.
 const mapApiCourse = (
     course: ApiCourse
 ): Course => ({
@@ -58,13 +73,7 @@ const mapApiCourse = (
 
     structure: course.structure,
 
-    units: course.units.map((unit) => ({
-        id: unit._id,
-        code: unit.code,
-        title: unit.title,
-        description: unit.description,
-        order: unit.order,
-    })),
+    units: course.units.map(mapApiUnit),
 
     contentCount: course.units.length,
 })
@@ -104,4 +113,22 @@ export async function getCoursesByLanguage(
         await response.json()
 
     return data.map(mapApiCourse)
+}
+
+// Fetches the embedded units belonging to one course.
+export async function getCourseUnits(
+    courseId: string
+): Promise<CourseUnit[]> {
+    const response = await fetch(
+        `${API_URL}/api/v1/courses/${courseId}/units`
+    )
+
+    if (!response.ok) {
+        throw new Error('Failed to load units')
+    }
+
+    const data: ApiUnit[] =
+        await response.json()
+
+    return data.map(mapApiUnit)
 }
