@@ -442,17 +442,18 @@ export default function ConjugationExercise({
       <header className={styles.exerciseHeader}>
 
         <div className={styles.courseInfo}>
-          <p className={styles.languageName}>
-            {languageName}
-          </p>
-
-          <p className={styles.courseName}>
-            {courseName}
-          </p>
 
           <p className={styles.unitName}>
             {unitName}
           </p>
+          <p className={styles.courseName}>
+            {courseName}
+          </p>
+          <p className={styles.languageName}>
+            {languageName}
+          </p>
+
+
         </div>
 
 
