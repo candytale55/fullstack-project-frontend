@@ -27,7 +27,7 @@
   },
   "include": [
     "src",
-    "docs/notas/mocks/languagesMock.ts",
+    "src/mocks/languagesMock.ts",
     "src/mocks/coursesMock.ts"
   ]
 }

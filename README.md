@@ -82,7 +82,9 @@ El backend contiene además modelos y endpoints CRUD preparados para futuras fun
 
 ### Login / Register
 
-<!-- Añadir screenshot -->
+| Register | Login |
+|---|---|
+|![](./docs/)|![]()|
 
 ### Selección de idiomas y cursos
 
