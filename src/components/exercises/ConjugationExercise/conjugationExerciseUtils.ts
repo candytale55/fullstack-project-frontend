@@ -20,7 +20,9 @@ export type ConjugationQuestion = {
   pronunciation?: string
 }
 
+
 /* --------------- Persons  --------------- */
+
 /*
  * Maps the property names stored in MongoDB
  * to the labels displayed in the exercise.
@@ -52,13 +54,12 @@ const persons: {
   ]
 
 
-
 /* ----------- Create Questions  ---------- */
+
 /*
  * Converts conjugation documents received from
  * the database into individual exercise questions.
  */
-
 export const createConjugationQuestions = (
   conjugations: PortugueseVerbConjugation[]
 ): ConjugationQuestion[] => {
@@ -75,6 +76,7 @@ export const createConjugationQuestions = (
           if (!answer) {
             return []
           }
+
 
           return [
             {
@@ -101,4 +103,42 @@ export const createConjugationQuestions = (
       )
     }
   )
+}
+
+
+/* ----------- Shuffle Questions  ---------- */
+
+/*
+ * Creates a copy of the questions
+ * and places them in random order.
+ * The original questions array is not modified.
+ */
+export const shuffleQuestions = <T,>(
+  items: T[]
+): T[] => {
+
+  const shuffled = [...items]
+
+  for (
+    let index = shuffled.length - 1;
+    index > 0;
+    index--
+  ) {
+
+    const randomIndex =
+      Math.floor(
+        Math.random() * (index + 1)
+      )
+
+    const currentItem =
+      shuffled[index]
+
+    shuffled[index] =
+      shuffled[randomIndex] as T
+
+    shuffled[randomIndex] =
+      currentItem as T
+  }
+
+  return shuffled
 }

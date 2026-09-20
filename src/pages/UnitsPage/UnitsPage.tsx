@@ -20,7 +20,6 @@ import type {
 
 import Alert from '../../components/ui/Alert/Alert'
 import Loader from '../../components/ui/Loader/Loader'
-
 import styles from './UnitsPage.module.css'
 
 
@@ -134,7 +133,7 @@ export default function UnitsPage() {
             </div>
 
             <Link
-              to={`/languages/${languageId}/courses/${courseId}/units/${unit.id}/exercises`}
+              to={`/languages/${languageId}/courses/${courseId}/units/${unit.id}/exercise`}
               className={styles.exerciseLink}
             >
               Ver ejercicios
