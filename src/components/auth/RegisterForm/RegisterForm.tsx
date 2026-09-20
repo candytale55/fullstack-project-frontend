@@ -77,7 +77,10 @@ export default function RegisterForm() {
                 onSubmit={handleSubmit}
             >
                 {error && (
-                    <Alert variant="error">
+                    <Alert
+                        id="register-error"
+                        variant="error"
+                    >
                         {error}
                     </Alert>
                 )}
@@ -97,6 +100,7 @@ export default function RegisterForm() {
                             setName(event.target.value)
                         }
                         disabled={isLoading}
+                        aria-describedby={error ? 'register-error' : undefined}
                         required
                     />
                 </div>
@@ -116,6 +120,7 @@ export default function RegisterForm() {
                             setEmail(event.target.value)
                         }
                         disabled={isLoading}
+                        aria-describedby={error ? 'register-error' : undefined}
                         required
                     />
                 </div>
@@ -135,6 +140,7 @@ export default function RegisterForm() {
                             setPassword(event.target.value)
                         }
                         disabled={isLoading}
+                        aria-describedby={error ? 'register-error' : undefined}
                         required
                     />
                 </div>
@@ -142,9 +148,13 @@ export default function RegisterForm() {
                 <Button
                     type="submit"
                     disabled={isLoading}
+                    aria-label={isLoading ? 'Creando cuenta' : undefined}
                 >
                     {isLoading ? (
-                        <Loader size="small" />
+                        <Loader
+                            size="small"
+                            aria-hidden="true"
+                        />
                     ) : (
                         'Registrarse'
                     )}

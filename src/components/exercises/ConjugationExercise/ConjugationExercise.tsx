@@ -1,6 +1,6 @@
 /* Runs the interactive conjugation session from questions generated from API data. */
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import styles from './ConjugationExercise.module.css'
 
@@ -115,6 +115,15 @@ export default function ConjugationExercise({
 
   const [isFinished, setIsFinished] =
     useState(false)
+
+  const feedbackRef =
+    useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (isChecked) {
+      feedbackRef.current?.focus()
+    }
+  }, [isChecked])
 
 
   /* ---------------------------------- */
@@ -562,7 +571,11 @@ export default function ConjugationExercise({
 
           {isChecked && (
 
-            <div className={styles.feedback}>
+            <div
+              ref={feedbackRef}
+              className={styles.feedback}
+              tabIndex={-1}
+            >
 
               <div
                 className={

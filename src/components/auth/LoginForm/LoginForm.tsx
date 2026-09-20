@@ -76,7 +76,10 @@ export default function LoginForm() {
         onSubmit={handleSubmit}
       >
         {error && (
-          <Alert variant="error">
+          <Alert
+            id="login-error"
+            variant="error"
+          >
             {error}
           </Alert>
         )}
@@ -96,6 +99,7 @@ export default function LoginForm() {
               setEmail(event.target.value)
             }
             disabled={isLoading}
+            aria-describedby={error ? 'login-error' : undefined}
             required
           />
         </div>
@@ -115,6 +119,7 @@ export default function LoginForm() {
               setPassword(event.target.value)
             }
             disabled={isLoading}
+            aria-describedby={error ? 'login-error' : undefined}
             required
           />
         </div>
@@ -122,9 +127,13 @@ export default function LoginForm() {
         <Button
           type="submit"
           disabled={isLoading}
+          aria-label={isLoading ? 'Iniciando sesión' : undefined}
         >
           {isLoading ? (
-            <Loader size="small" />
+            <Loader
+              size="small"
+              aria-hidden="true"
+            />
           ) : (
             'Iniciar sesión'
           )}
