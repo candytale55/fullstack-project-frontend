@@ -1,3 +1,5 @@
+/* Runs the interactive conjugation session from questions generated from API data. */
+
 import { useState } from 'react'
 
 import styles from './ConjugationExercise.module.css'

@@ -1,3 +1,5 @@
+/* Fetches Portuguese conjugations for ExercisePage from the mounted backend endpoint. */
+
 import type {
     PortugueseVerbConjugation
 } from './ConjugationExercise'

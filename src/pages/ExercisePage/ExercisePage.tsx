@@ -1,3 +1,5 @@
+/* Loads unit conjugation data and delegates the interactive session to ConjugationExercise. */
+
 import { useEffect, useState } from 'react'
 
 import {
@@ -39,6 +41,7 @@ export default function ExercisePage() {
   /* Load conjugations                  */
   /* ---------------------------------- */
 
+  /* Fetch only when the route identifies the unit dataset. */
   useEffect(() => {
 
     if (!unitId) {
@@ -88,6 +91,7 @@ export default function ExercisePage() {
    * Returns the user to the Units page
    * of the current course.
    */
+  /* Return to the course unit list while preserving the current course context. */
   const handleExit = () => {
 
     navigate(

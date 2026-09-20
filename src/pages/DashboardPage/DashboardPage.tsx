@@ -1,3 +1,5 @@
+/* Presents the authenticated user's overview using auth context and dashboard data. */
+
 import Button from '../../components/ui/Button/Button'
 import styles from './DashBoardPage.module.css'
 

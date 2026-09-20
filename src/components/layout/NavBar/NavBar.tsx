@@ -1,3 +1,5 @@
+/* Renders navigation links according to authentication state from useAuth. */
+
 import { NavLink, useNavigate } from 'react-router'
 
 import Button from '../../ui/Button/Button'

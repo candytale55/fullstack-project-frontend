@@ -1,4 +1,4 @@
-// Página temporal para dejar la estructura base, usa activeCourseMock y dashboardStatsMock
+/* Presents the temporary progress view from dashboard data until the progress API is connected. */
 
 import {
     activeCourseMock,

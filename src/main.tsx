@@ -1,3 +1,5 @@
+/* Bootstraps React with the authentication provider and browser routing. */
+
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'

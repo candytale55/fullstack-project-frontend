@@ -1,3 +1,5 @@
+/* Lists course or unit exercises and builds links consumed by ExercisePage. */
+
 import { Link, useParams } from 'react-router'
 
 import { coursesMock } from '../../mocks/coursesMock'
@@ -15,13 +17,12 @@ export default function ExercisesPage() {
     unitId,
   } = useParams()
 
-  // Find the course based on the courseId and languageId
+  /* Resolve the current course and optional unit before listing exercises. */
   const course = coursesMock.find(
     (course) => course.id === courseId &&
       course.languageId === languageId
   )
 
-  // If unitId is provided, find it based on the unitId and courseId
   const unit = unitId
     ? unitsMock.find(
       (unit) => unit.id === unitId &&
@@ -29,6 +30,7 @@ export default function ExercisesPage() {
     )
     : undefined
 
+  /* Keep direct-course exercises separate from unit exercises. */
   const exercises = exercisesMock.filter(
     (exercise) => {
       if (unitId) { // If unitId is provided, filter by courseId and unitId
@@ -43,8 +45,6 @@ export default function ExercisesPage() {
       )
     }).sort((a, b) => a.order - b.order) // Sort by their order within the unit or course
 
-  console.log(exercises) // TODO: Remove this log before deploying
-
   if (!course) {
     return (
       <div className={styles.exercisesPage}>
@@ -53,7 +53,6 @@ export default function ExercisesPage() {
     )
   }
 
-  // If a unitId is provided but the unit is not found, show an error message
   if (unitId && !unit) {
     return (
       <div className={styles.exercisesPage}>
@@ -73,7 +72,6 @@ export default function ExercisesPage() {
       </header>
 
       <main className={styles.exercisesPage}>
-        {/* Map through the exercises and display each one as a card with a link to the exercise page */}
         {exercises.map((exercise) => {
           const exercisePath = unitId
             ? `/languages/${languageId}/courses/${courseId}/units/${unitId}/exercises/${exercise.id}`

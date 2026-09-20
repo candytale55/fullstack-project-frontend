@@ -1,3 +1,5 @@
+/* Converts API conjugation records into person-level questions for the exercise component. */
+
 import type {
   PortugueseVerbConjugation,
   PortugueseVerbForms,

@@ -1,3 +1,5 @@
+/* Defines the frontend route tree and composes protected pages with the shared layout. */
+
 import { Routes, Route } from 'react-router'
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute.tsx'
 import AppLayout from './components/layout/AppLayout/AppLayout.tsx'

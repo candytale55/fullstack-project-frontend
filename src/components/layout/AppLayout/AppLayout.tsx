@@ -1,4 +1,4 @@
-// Esqueleto General  
+/* Wraps routed pages with the shared navigation and content container. */
 import type { ReactNode } from 'react'
 import PageContainer from '../PageContainer/PageContainer.tsx'
 import NavBar from '../NavBar/NavBar.tsx'
