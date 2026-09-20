@@ -220,57 +220,72 @@ export default function ConjugationExercise({
    * the exercise begins.
    */
   if (!hasStarted) {
-
     return (
-      <section className={styles.exercise}>
+      <section className={styles.setupPage}>
 
-        <h2>
-          Práctica de conjugación
-        </h2>
+        <div className={styles.setupCard}>
 
-        <p>
-          Preguntas disponibles:
-          {' '}
-          {allQuestions.length}
-        </p>
+          <h2 className={styles.setupTitle}>
+            Práctica de conjugación
+          </h2>
 
+          <p className={styles.availableQuestions}>
+            Preguntas disponibles:
+            {' '}
+            {allQuestions.length}
+          </p>
 
-        <label htmlFor="questionCount">
-          Número de preguntas
-        </label>
+          <form
+            className={styles.setupForm}
+            onSubmit={(event) => {
+              event.preventDefault()
+              handleStart()
+            }}
+          >
 
+            <label
+              htmlFor="questionCount"
+              className={styles.setupLabel}
+            >
+              Número de preguntas
+            </label>
 
-        <input
-          id="questionCount"
-          className={styles.input}
-          type="number"
-          min={1}
-          max={allQuestions.length}
-          value={questionCount}
-          onChange={(event) =>
-            setQuestionCount(
-              Number(event.target.value)
-            )
-          }
-        />
+            <input
+              id="questionCount"
+              className={styles.questionCountInput}
+              type="number"
+              min={1}
+              max={allQuestions.length}
+              value={questionCount}
+              onChange={(event) =>
+                setQuestionCount(
+                  Number(event.target.value)
+                )
+              }
+            />
 
+            <div className={styles.setupActions}>
 
-        <button
-          type="button"
-          className={styles.button}
-          onClick={handleStart}
-        >
-          Comenzar
-        </button>
+              <button
+                type="submit"
+                className={styles.primaryButton}
+              >
+                Comenzar
+              </button>
 
+              <button
+                type="button"
+                className={styles.secondaryButton}
+                onClick={onExit}
+              >
+                Salir
+              </button>
 
-        <button
-          type="button"
-          className={styles.button}
-          onClick={onExit}
-        >
-          Salir
-        </button>
+            </div>
+
+          </form>
+
+        </div>
 
       </section>
     )
@@ -282,40 +297,46 @@ export default function ConjugationExercise({
   /* ---------------------------------- */
 
   if (isFinished) {
-
     return (
-      <section className={styles.exercise}>
+      <section className={styles.finishedPage}>
 
-        <h2>
-          Ejercicio terminado
-        </h2>
+        <div className={styles.finishedCard}>
 
+          <h2 className={styles.finishedTitle}>
+            Ejercicio terminado
+          </h2>
 
-        <p>
-          Has completado
-          {' '}
-          {sessionQuestions.length}
-          {' '}
-          preguntas.
-        </p>
+          <p className={styles.finishedMessage}>
+            Has completado
+            {' '}
+            <strong>
+              {sessionQuestions.length}
+            </strong>
+            {' '}
+            preguntas.
+          </p>
 
+          <div className={styles.finishedActions}>
 
-        <button
-          type="button"
-          className={styles.button}
-          onClick={handleStart}
-        >
-          Repetir
-        </button>
+            <button
+              type="button"
+              className={styles.primaryButton}
+              onClick={handleStart}
+            >
+              Repetir
+            </button>
 
+            <button
+              type="button"
+              className={styles.secondaryButton}
+              onClick={onExit}
+            >
+              Salir
+            </button>
 
-        <button
-          type="button"
-          className={styles.button}
-          onClick={onExit}
-        >
-          Salir
-        </button>
+          </div>
+
+        </div>
 
       </section>
     )
