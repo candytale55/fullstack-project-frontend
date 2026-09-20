@@ -1,81 +1,71 @@
 import { useParams } from "react-router"
+import { useState, useEffect } from "react"
 
-import { coursesMock } from "../../mocks/coursesMock"
-import { unitsMock } from "../../mocks/unitsMock"
-import { exercisesMock } from "../../mocks/exercisesMock"
+import ConjugationExercise, {
+  type PortugueseVerbConjugation,
+} from "../../components/exercises/ConjugationExercise/ConjugationExercise"
 
-import styles from "./ExercisePage.module.css"
+import { getPortugueseVerbConjugationsByUnit } from "../../components/exercises/ConjugationExercise/portugueseVerbConjugationService"
+
 
 export default function ExercisePage() {
+  const { unitId } = useParams()
 
-    const {
-        languageId,
-        courseId,
-        unitId,
-        exerciseId
-    } = useParams()
+  const [conjugations, setConjugations] =
+    useState<PortugueseVerbConjugation[]>([])
 
-    const course = coursesMock.find(
-        (course) =>
-            course.id === courseId &&
-            course.languageId === languageId
-    )
+  const [isLoading, setIsLoading] =
+    useState(true)
 
-    const unit = unitId
-        ? unitsMock.find(
-            (unit) =>
-                unit.id === unitId &&
-                unit.courseId === courseId
-        ) : undefined
+  const [error, setError] =
+    useState<string | null>(null)
 
-    const exercise = exercisesMock.find(
-        (exercise) =>
-            exercise.id === exerciseId &&
-            courseId === courseId && (
-                unitId
-                    ? exercise.unitId === unitId
-                    : exercise.unitId === undefined
-            )
-    )
 
-    if (!course) {
-        return (
-            <div className={styles.exercisePage}>
-                <h1>Curso no encontrado</h1>
-            </div>
-        )
+  useEffect(() => {
+    if (!unitId) {
+      return
     }
 
-    if (unitId && !unit) {
-        return (
-            <div className={styles.exercisePage}>
-                <h1>Unidad no encontrada</h1>
-            </div>
+    const loadConjugations = async () => {
+      try {
+        const data =
+          await getPortugueseVerbConjugationsByUnit(
+            unitId
+          )
+
+        setConjugations(data)
+
+      } catch (error) {
+        console.error(
+          'Error loading conjugations:',
+          error
         )
+
+        setError(
+          'No se pudieron cargar los ejercicios'
+        )
+
+      } finally {
+        setIsLoading(false)
+      }
     }
 
-    if (!exercise) {
-        return (
-            <div className={styles.exercisePage}>
-                <h1>Ejercicio no encontrado</h1>
-            </div>
-        )
-    }
+    loadConjugations()
 
-    return (
-        <div className={styles.exercisePage}>
-            <header className={styles.header}>
-                <p>{course.title}</p>
-                {unit && <p>{unit.title}</p>}
-                <h1>{exercise.title}</h1>
-                {exercise.description &&
-                    (<p>{exercise.description}</p>)}
-            </header>
+  }, [unitId])
 
-            <main className={styles.exerciseContent}>
-                <p>Tipo de ejercicio: {exercise.type}</p>
-                <p>Aqui va el contenido del ejercicio</p> {/* //TODO: Reemplazar con el contenido real del ejercicio */}
-            </main>
-        </div>
-    )
+
+  if (isLoading) {
+    return <p>Cargando...</p>
+  }
+
+  if (error) {
+    return <p>{error}</p>
+  }
+
+  return (
+    <ConjugationExercise
+      conjugations={conjugations}
+    />
+  )
 }

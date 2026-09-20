@@ -40,20 +40,12 @@ export default function App() {
               </ProtectedRoute>
             } />
           <Route
-            path="/languages/:languageId/courses/"
-            element={
-              <ProtectedRoute>
-                <CoursesPage />
-              </ProtectedRoute>
-            } />
-          <Route
             path="/languages/:languageId/courses/:courseId"
             element={
               <ProtectedRoute>
                 <CoursePage />
               </ProtectedRoute>
             } />
-          <Route />
           <Route
             path="/languages/:languageId/courses/:courseId/units"
             element={
@@ -104,7 +96,16 @@ export default function App() {
                 <ProgressPage />
               </ProtectedRoute>
             }
-          /> 
+          />
+
+          <Route
+            path="/languages/:languageId/courses/:courseId/units/:unitId/exercise"
+            element={
+              <ProtectedRoute>
+                <ExercisePage />
+              </ProtectedRoute>
+            }
+          />
 
           <Route
             path="*"
