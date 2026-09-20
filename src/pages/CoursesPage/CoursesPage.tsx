@@ -75,7 +75,10 @@ export default function CoursesPage() {
                 {courses.map((course) => (
                     <article
                         key={course.id}
-                        className={styles.courseCard}
+                        className={`${styles.courseCard} ${course.code === 'pt-conjugation'
+                                ? styles.courseCardAvailable
+                                : ''
+                            }`}
                     >
                         <div className={styles.courseInfo}>
                             <h2>{course.title}</h2>

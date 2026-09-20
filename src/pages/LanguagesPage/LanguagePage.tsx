@@ -66,7 +66,10 @@ export default function LanguagesPage() {
         {languages.map((language) => (
           <article
             key={language.id}
-            className={styles.languageCard}
+            className={`${styles.languageCard} ${language.code === 'pt'
+                ? styles.languageCardAvailable
+                : ''
+              }`}
           >
             <div>
               <h2>{language.nativeName}</h2>

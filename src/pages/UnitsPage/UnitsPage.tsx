@@ -105,6 +105,12 @@ export default function UnitsPage() {
     )
   }
 
+  const availableExerciseUnits = new Set([
+    'present',
+    'imperfect',
+    'imperative',
+  ])
+
 
   return (
     <div className={styles.unitsPage}>
@@ -122,7 +128,11 @@ export default function UnitsPage() {
         {units.map((unit) => (
           <article
             key={unit.id}
-            className={styles.unitCard}
+            className={`${styles.unitCard} ${course.code === 'pt-conjugation' &&
+                availableExerciseUnits.has(unit.code)
+                ? styles.unitCardAvailable
+                : ''
+              }`}
           >
             <div className={styles.unitInfo}>
               <h2>{unit.title}</h2>
@@ -133,7 +143,7 @@ export default function UnitsPage() {
             </div>
 
             <Link
-              to={`/languages/${languageId}/courses/${courseId}/units/${unit.id}/exercise`}
+              to={`/languages/${languageId}/courses/${courseId}/units/${unit.id}/exercises`}
               className={styles.exerciseLink}
             >
               Ver ejercicios

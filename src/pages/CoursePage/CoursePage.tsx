@@ -96,7 +96,12 @@ export default function CoursePage() {
         )}
       </header>
 
-      <section className={styles.content}>
+      <section
+        className={`${styles.content} ${course.code === 'pt-conjugation'
+            ? styles.contentAvailable
+            : ''
+          }`}
+      >
         <h2>Contenido del curso</h2>
 
         <p>

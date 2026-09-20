@@ -5,6 +5,8 @@
   --color-text: #222222;
   --color-text-muted: #666666;
   --color-border: #dddddd;
+  --color-route-highlight: #d6ecea;
+  --color-route-highlight-border: #5f9f9a;
 
   /* Spacing */
   --space-xs: 0.25rem;

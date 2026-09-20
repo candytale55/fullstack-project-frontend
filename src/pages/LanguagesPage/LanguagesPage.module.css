@@ -41,6 +41,11 @@
     border-radius: var(--border-radius-md);
 }
 
+.languageCardAvailable {
+    background-color: var(--color-route-highlight);
+    border-color: var(--color-route-highlight-border);
+}
+
 .languageCard h2,
 .languageCard p {
     margin: 0;
