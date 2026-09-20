@@ -125,31 +125,40 @@ export default function UnitsPage() {
       </header>
 
       <div className={styles.unitList}>
-        {units.map((unit) => (
-          <article
-            key={unit.id}
-            className={`${styles.unitCard} ${course.code === 'pt-conjugation' &&
-                availableExerciseUnits.has(unit.code)
-                ? styles.unitCardAvailable
-                : ''
-              }`}
-          >
-            <div className={styles.unitInfo}>
-              <h2>{unit.title}</h2>
+        {units.map((unit) => {
+          const hasExercises =
+            course.code === 'pt-conjugation' &&
+            availableExerciseUnits.has(unit.code)
 
-              {unit.description && (
-                <p>{unit.description}</p>
-              )}
-            </div>
+          const unitPath = hasExercises
+            ? `/languages/${languageId}/courses/${courseId}/units/${unit.id}/exercise`
+            : `/languages/${languageId}/courses/${courseId}/units/${unit.id}/exercises`
 
-            <Link
-              to={`/languages/${languageId}/courses/${courseId}/units/${unit.id}/exercises`}
-              className={styles.exerciseLink}
+          return (
+            <article
+              key={unit.id}
+              className={`${styles.unitCard} ${hasExercises
+                  ? styles.unitCardAvailable
+                  : ''
+                }`}
             >
-              Ver ejercicios
-            </Link>
-          </article>
-        ))}
+              <div className={styles.unitInfo}>
+                <h2>{unit.title}</h2>
+
+                {unit.description && (
+                  <p>{unit.description}</p>
+                )}
+              </div>
+
+              <Link
+                to={unitPath}
+                className={styles.exerciseLink}
+              >
+                Ver ejercicios
+              </Link>
+            </article>
+          )
+        })}
       </div>
     </div>
   )
