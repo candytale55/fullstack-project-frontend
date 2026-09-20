@@ -25,9 +25,3 @@ dist-ssr
 *.sln
 *.sw?
 
-# Miscellaneous
-conc.py
-project_context_front.txt 
-notas_temporales.md
-/notas
-# TODO: Remove files before deploying

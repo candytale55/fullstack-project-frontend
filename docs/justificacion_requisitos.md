@@ -1,5 +1,10 @@
 # Justificación de requisitos
 
+## Referencias a la documentación: 
+- [README](../README.md)
+- [Notas de desarrollo](./notas_desarrollo.md)
+- [Justificación de requisitos](./justificacion-requisitos.md)
+
 ## Alcance del proyecto
 
 El proyecto es un **MVP Full Stack de una plataforma de estudio de idiomas orientada al usuario estudiante**.
