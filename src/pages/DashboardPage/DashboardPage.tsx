@@ -23,7 +23,7 @@ export default function DashboardPage() {
   const handleTestProgress = async () => {
     try {
       const result = await saveStudySession(
-        'COURSE_ID_DE_MONGODB',
+        '6ab071537d100e68149bc9ff',
         {
           questionsAnswered: 10,
           correctAnswers: 7,
