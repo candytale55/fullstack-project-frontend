@@ -9,9 +9,40 @@ import {
 } from '../../mocks/dashboardMock'
 
 import useAuth from '../../hooks/useAuth'
+import { saveStudySession } from '../../services/progressService'
 
 export default function DashboardPage() {
   const { user } = useAuth()
+
+
+  /* ------- Test saving study session ----- */
+  // Temporary test for saving study session
+  // TODO: REMOVE AFTER TESTING
+  
+
+  const handleTestProgress = async () => {
+    try {
+      const result = await saveStudySession(
+        'COURSE_ID_DE_MONGODB',
+        {
+          questionsAnswered: 10,
+          correctAnswers: 7,
+        }
+      )
+
+      console.log(
+        'Progress saved:',
+        result
+      )
+
+    } catch (error) {
+      console.error(
+        'Error saving progress:',
+        error
+      )
+    }
+  }
+ /* ------------------------------------- */
 
   return (
     <div className={styles.dashboard}>
@@ -24,12 +55,21 @@ export default function DashboardPage() {
 
       <div className={styles.dashboardGrid}>
         <section className={styles.card}>
+
           <h2>Curso activo</h2>
 
           <div className={styles.courseInfo}>
             <h3>{activeCourseMock.title}</h3>
             <p>Nivel: {activeCourseMock.level}</p>
           </div>
+
+          {/* // TODO: Remove test progress button after testing */}
+          <button
+            type="button"
+            onClick={handleTestProgress}
+          >
+            Test progress
+          </button>
 
           <div className={styles.progressInfo}>
             <p>
