@@ -1,6 +1,10 @@
 /* Runs the conjugation session using questions generated from API records. */
 
-import { useMemo, useRef, useState } from 'react'
+import {
+  useCallback,
+  useMemo,
+  useState,
+} from 'react'
 
 import styles from './ConjugationExercise.module.css'
 
@@ -115,8 +119,13 @@ export default function ConjugationExercise({
   const [progressError, setProgressError] =
     useState<string | null>(null)
 
-  const answerInputRef =
-    useRef<HTMLInputElement>(null)
+  // Focuses the action button when feedback mounts after submission.
+  const actionButtonRef = useCallback(
+    (button: HTMLButtonElement | null) => {
+      button?.focus()
+    },
+    []
+  )
 
 
   /* --------------- Start exercise --------------- */
@@ -501,7 +510,6 @@ export default function ConjugationExercise({
               className={styles.input}
               type="text"
               value={userAnswer}
-              ref={answerInputRef}
               onChange={(event) =>
                 setUserAnswer(
                   event.target.value
@@ -565,6 +573,7 @@ export default function ConjugationExercise({
               <button
                 type="button"
                 className={styles.primaryButton}
+                ref={actionButtonRef}
                 onClick={handleNext}
                 disabled={isSavingProgress}
               >
