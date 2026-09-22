@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router'
 import useAuth from '../../hooks/useAuth'
 import useProgress from '../../hooks/useProgress'
 import CourseProgressCard from '../../components/dashboard/CourseProgressCard/CourseProgressCard'
+import StudyHeatmap from '../../components/dashboard/StudyHeatmap/StudyHeatmap'
 
 import Alert from '../../components/ui/Alert/Alert'
 import Button from '../../components/ui/Button/Button'
@@ -24,6 +25,15 @@ export default function DashboardPage() {
 
   // The API returns progress ordered from most to least recently studied.
   const lastCourse = progress[0] ?? null
+
+  // Prepares one sorted, duplicate-free list for a future StudyHeatmap.
+  const studyDays = Array.from(
+    new Set(
+      progress.flatMap(
+        (courseProgress) => courseProgress.studyDays
+      )
+    )
+  ).sort()
 
   // Uses the most recent progress record because the API sorts by lastStudiedAt.
   const handleContinueStudying = () => {
@@ -78,6 +88,35 @@ export default function DashboardPage() {
             onContinue={handleContinueStudying}
           />
         </div>
+      )}
+
+      {!loading && !error && (
+        <section className={styles.card}>
+          <div>
+            <h2 className={styles.heatmapTitle}>
+              Actividad de estudio
+            </h2>
+            <p className={styles.heatmapSubtitle}>
+              Últimos 3 meses
+            </p>
+          </div>
+
+          <StudyHeatmap studyDays={studyDays} />
+
+          <div className={styles.legend}>
+            <span className={styles.legendItem}>
+              <span
+                className={`${styles.legendSwatch} ${styles.legendSwatchStudied}`}
+              />
+              Día de estudio
+            </span>
+
+            <span className={styles.legendItem}>
+              <span className={styles.legendSwatch} />
+              Sin actividad
+            </span>
+          </div>
+        </section>
       )}
     </div>
   )
