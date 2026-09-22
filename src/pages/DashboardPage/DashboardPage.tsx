@@ -1,48 +1,50 @@
-/* Presents the authenticated user's overview using auth context and dashboard data. */
+/* Loads authenticated progress and presents one summary card per course. */
 
-import Button from '../../components/ui/Button/Button'
-import styles from './DashBoardPage.module.css'
-
-import {
-  activeCourseMock,
-  dashboardStatsMock,
-} from '../../mocks/dashboardMock'
+import { useEffect, useState } from 'react'
 
 import useAuth from '../../hooks/useAuth'
-import { saveStudySession } from '../../services/progressService'
+import { getMyProgress } from '../../services/progressService'
+import type { CourseProgress } from '../../types/progress'
+
+import Alert from '../../components/ui/Alert/Alert'
+import Loader from '../../components/ui/Loader/Loader'
+
+import styles from './DashBoardPage.module.css'
 
 export default function DashboardPage() {
   const { user } = useAuth()
 
+  const [progress, setProgress] =
+    useState<CourseProgress[]>([])
 
-  /* ------- Test saving study session ----- */
-  // Temporary test for saving study session
-  // TODO: REMOVE AFTER TESTING
-  
+  const [loading, setLoading] =
+    useState(true)
 
-  const handleTestProgress = async () => {
-    try {
-      const result = await saveStudySession(
-        '6ab071537d100e68149bc9ff',
-        {
-          questionsAnswered: 10,
-          correctAnswers: 7,
-        }
-      )
+  const [error, setError] =
+    useState('')
 
-      console.log(
-        'Progress saved:',
-        result
-      )
+  /* --------------- Load progress --------------- */
 
-    } catch (error) {
-      console.error(
-        'Error saving progress:',
-        error
-      )
+  // Loads progress once and keeps request failures in the page state.
+  useEffect(() => {
+    // Separates the async request from the effect lifecycle.
+    const loadProgress = async () => {
+      try {
+        const data = await getMyProgress()
+        setProgress(data)
+      } catch (error) {
+        setError(
+          error instanceof Error
+            ? error.message
+            : 'No se pudo cargar el progreso'
+        )
+      } finally {
+        setLoading(false)
+      }
     }
-  }
- /* ------------------------------------- */
+
+    loadProgress()
+  }, [])
 
   return (
     <div className={styles.dashboard}>
@@ -53,69 +55,89 @@ export default function DashboardPage() {
         </p>
       </header>
 
-      <div className={styles.dashboardGrid}>
-        <section className={styles.card}>
+      {loading && <Loader />}
 
-          <h2>Curso activo</h2>
+      {/* Error takes precedence over the empty state after loading. */}
+      {!loading && error && (
+        <Alert variant="error">
+          {error}
+        </Alert>
+      )}
 
-          <div className={styles.courseInfo}>
-            <h3>{activeCourseMock.title}</h3>
-            <p>Nivel: {activeCourseMock.level}</p>
-          </div>
+      {!loading && !error && progress.length === 0 && (
+        <Alert>
+          Todavía no has realizado ninguna sesión de estudio.
+        </Alert>
+      )}
 
-          {/* // TODO: Remove test progress button after testing */}
-          <button
-            type="button"
-            onClick={handleTestProgress}
-          >
-            Test progress
-          </button>
+      {!loading && !error && progress.length > 0 && (
+        <div className={styles.dashboardGrid}>
+          {progress.map((courseProgress) => {
+            // Avoids invalid percentages when no questions were answered.
+            const precision =
+              courseProgress.questionsAnswered === 0
+                ? 0
+                : courseProgress.correctAnswers /
+                courseProgress.questionsAnswered * 100
 
-          <div className={styles.progressInfo}>
-            <p>
-              Progreso: {activeCourseMock.progress}%
-            </p>
+            // Backend dates arrive as strings and may be absent for new records.
+            const lastActivity =
+              courseProgress.lastStudiedAt
+                ? new Date(
+                  courseProgress.lastStudiedAt
+                ).toLocaleDateString('es-ES')
+                : 'Sin actividad'
 
-            <p>
-              {activeCourseMock.completedUnits} de{' '}
-              {activeCourseMock.totalUnits} unidades completadas
-            </p>
-          </div>
+            return (
+              <section
+                className={styles.card}
+                key={courseProgress.id}
+              >
+                <h2>
+                  {courseProgress.course.language.name}
+                </h2>
 
-          <Button
-            type="button"
-            className={styles.continueButton}
-          >
-            Continuar estudiando
-          </Button>
-        </section>
+                <div className={styles.courseInfo}>
+                  <h3>{courseProgress.course.title}</h3>
+                  <p>Nivel: {courseProgress.course.level}</p>
+                </div>
 
-        <section className={styles.card}>
-          <h2>Tu progreso</h2>
+                <div className={styles.stats}>
+                  <div className={styles.stat}>
+                    <strong>
+                      {courseProgress.completedSessions}
+                    </strong>
+                    <span>Sesiones</span>
+                  </div>
 
-          <div className={styles.stats}>
-            <div className={styles.stat}>
-              <strong>
-                {dashboardStatsMock.completedExercises}
-              </strong>
+                  <div className={styles.stat}>
+                    <strong>
+                      {courseProgress.questionsAnswered}
+                    </strong>
+                    <span>Preguntas respondidas</span>
+                  </div>
 
-              <span>
-                Ejercicios completados
-              </span>
-            </div>
+                  <div className={styles.stat}>
+                    <strong>
+                      {courseProgress.correctAnswers}
+                    </strong>
+                    <span>Respuestas correctas</span>
+                  </div>
 
-            <div className={styles.stat}>
-              <strong>
-                {dashboardStatsMock.studyStreak}
-              </strong>
+                  <div className={styles.stat}>
+                    <strong>{precision.toFixed(0)}%</strong>
+                    <span>Precisión</span>
+                  </div>
+                </div>
 
-              <span>
-                Días de racha
-              </span>
-            </div>
-          </div>
-        </section>
-      </div>
+                <p>
+                  Última actividad: {lastActivity}
+                </p>
+              </section>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
