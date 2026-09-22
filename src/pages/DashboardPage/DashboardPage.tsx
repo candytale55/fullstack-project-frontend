@@ -22,17 +22,18 @@ export default function DashboardPage() {
     error,
   } = useProgress()
 
+  // The API returns progress ordered from most to least recently studied.
+  const lastCourse = progress[0] ?? null
+
   // Uses the most recent progress record because the API sorts by lastStudiedAt.
   const handleContinueStudying = () => {
-    const activeProgress = progress[0]
-
-    if (!activeProgress) {
+    if (!lastCourse) {
       navigate('/languages')
       return
     }
 
     navigate(
-      `/languages/${activeProgress.course.language.id}/courses/${activeProgress.course.id}`
+      `/languages/${lastCourse.course.language.id}/courses/${lastCourse.course.id}`
     )
   }
 
@@ -70,19 +71,12 @@ export default function DashboardPage() {
         </section>
       )}
 
-      {!loading && !error && progress.length > 0 && (
+      {!loading && !error && lastCourse && (
         <div className={styles.dashboardGrid}>
-          {progress.map((courseProgress) => (
-            <CourseProgressCard
-              key={courseProgress.id}
-              progress={courseProgress}
-              onContinue={
-                courseProgress.id === progress[0].id
-                  ? handleContinueStudying
-                  : undefined
-              }
-            />
-          ))}
+          <CourseProgressCard
+            progress={lastCourse}
+            onContinue={handleContinueStudying}
+          />
         </div>
       )}
     </div>
