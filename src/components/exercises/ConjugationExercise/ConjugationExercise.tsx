@@ -1,6 +1,6 @@
 /* Runs the conjugation session using questions generated from API records. */
 
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 
 import styles from './ConjugationExercise.module.css'
 
@@ -73,11 +73,11 @@ export default function ConjugationExercise({
   unitName,
 }: ConjugationExerciseProps) {
 
-  // Expands API records into person-level questions for the session.
-  const allQuestions =
-    createConjugationQuestions(
-      conjugations
-    )
+  // Reuse derived questions while answer state changes during typing.
+  const allQuestions = useMemo(
+    () => createConjugationQuestions(conjugations),
+    [conjugations]
+  )
 
 
   /* --------------- States --------------- */
@@ -114,11 +114,11 @@ export default function ConjugationExercise({
 
   const [progressError, setProgressError] =
     useState<string | null>(null)
-  
+
   const answerInputRef =
     useRef<HTMLInputElement>(null)
-    
-  
+
+
   /* --------------- Start exercise --------------- */
 
   // Randomizes questions and limits the session to the requested amount.
@@ -435,7 +435,7 @@ export default function ConjugationExercise({
   }
 
   /* ---------------------------------- */
- 
+
   return (
     <section className={styles.exercisePage}>
 
