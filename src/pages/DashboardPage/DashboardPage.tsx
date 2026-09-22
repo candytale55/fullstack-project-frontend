@@ -1,18 +1,21 @@
 /* Loads authenticated progress and presents one summary card per course. */
 
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
 
 import useAuth from '../../hooks/useAuth'
 import { getMyProgress } from '../../services/progressService'
 import type { CourseProgress } from '../../types/progress'
 
 import Alert from '../../components/ui/Alert/Alert'
+import Button from '../../components/ui/Button/Button'
 import Loader from '../../components/ui/Loader/Loader'
 
 import styles from './DashBoardPage.module.css'
 
 export default function DashboardPage() {
   const { user } = useAuth()
+  const navigate = useNavigate()
 
   const [progress, setProgress] =
     useState<CourseProgress[]>([])
@@ -22,6 +25,20 @@ export default function DashboardPage() {
 
   const [error, setError] =
     useState('')
+
+  // Uses the most recent progress record because the API sorts by lastStudiedAt.
+  const handleContinueStudying = () => {
+    const activeProgress = progress[0]
+
+    if (!activeProgress) {
+      navigate('/languages')
+      return
+    }
+
+    navigate(
+      `/languages/${activeProgress.course.language.id}/courses/${activeProgress.course.id}`
+    )
+  }
 
   /* --------------- Load progress --------------- */
 
@@ -65,14 +82,24 @@ export default function DashboardPage() {
       )}
 
       {!loading && !error && progress.length === 0 && (
-        <Alert>
-          Todavía no has realizado ninguna sesión de estudio.
-        </Alert>
+        <section className={styles.card}>
+          <Alert>
+            Todavía no has realizado ninguna sesión de estudio.
+          </Alert>
+
+          <Button
+            type="button"
+            className={styles.continueButton}
+            onClick={handleContinueStudying}
+          >
+            Continuar estudiando
+          </Button>
+        </section>
       )}
 
       {!loading && !error && progress.length > 0 && (
         <div className={styles.dashboardGrid}>
-          {progress.map((courseProgress) => {
+          {progress.map((courseProgress, index) => {
             // Avoids invalid percentages when no questions were answered.
             const precision =
               courseProgress.questionsAnswered === 0
@@ -133,6 +160,16 @@ export default function DashboardPage() {
                 <p>
                   Última actividad: {lastActivity}
                 </p>
+
+                {index === 0 && (
+                  <Button
+                    type="button"
+                    className={styles.continueButton}
+                    onClick={handleContinueStudying}
+                  >
+                    Continuar estudiando
+                  </Button>
+                )}
               </section>
             )
           })}
