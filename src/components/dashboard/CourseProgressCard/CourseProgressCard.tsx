@@ -9,12 +9,14 @@ import styles from './CourseProgressCard.module.css'
 type CourseProgressCardProps = {
     progress: CourseProgress
     onContinue?: () => void
+    continueLabel?: string
 }
 
 
 export default function CourseProgressCard({
     progress,
     onContinue,
+    continueLabel = 'Continuar estudiando',
 }: CourseProgressCardProps) {
     // Avoids invalid percentages when no questions were answered.
     const precision =
@@ -70,7 +72,7 @@ export default function CourseProgressCard({
                     className={styles.continueButton}
                     onClick={onContinue}
                 >
-                    Continuar estudiando
+                    {continueLabel}
                 </Button>
             )}
         </section>

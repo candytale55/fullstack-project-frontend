@@ -61,6 +61,7 @@ export default function ProgressPage() {
                                     courseProgress.course.language.id
                                 )
                             }
+                            continueLabel="Continuar"
                         />
                     ))}
                 </div>
