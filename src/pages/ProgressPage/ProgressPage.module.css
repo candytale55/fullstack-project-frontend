@@ -22,6 +22,12 @@
     color: var(--color-text-muted);
 }
 
+.progressGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+}
+
 .section {
     padding: var(--space-lg);
 
@@ -64,4 +70,13 @@
 
 .stats span {
     color: var(--color-text-muted);
+}
+
+@media (min-width: 768px) {
+    .progressGrid {
+        grid-template-columns: repeat(
+            auto-fit,
+            minmax(18rem, 1fr)
+        );
+    }
 }

@@ -1,12 +1,10 @@
 /* Loads authenticated progress and presents one summary card per course. */
 
-import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 
 import useAuth from '../../hooks/useAuth'
-import { getMyProgress } from '../../services/progressService'
+import useProgress from '../../hooks/useProgress'
 import CourseProgressCard from '../../components/dashboard/CourseProgressCard/CourseProgressCard'
-import type { CourseProgress } from '../../types/progress'
 
 import Alert from '../../components/ui/Alert/Alert'
 import Button from '../../components/ui/Button/Button'
@@ -18,14 +16,11 @@ export default function DashboardPage() {
   const { user } = useAuth()
   const navigate = useNavigate()
 
-  const [progress, setProgress] =
-    useState<CourseProgress[]>([])
-
-  const [loading, setLoading] =
-    useState(true)
-
-  const [error, setError] =
-    useState('')
+  const {
+    progress,
+    loading,
+    error,
+  } = useProgress()
 
   // Uses the most recent progress record because the API sorts by lastStudiedAt.
   const handleContinueStudying = () => {
@@ -40,29 +35,6 @@ export default function DashboardPage() {
       `/languages/${activeProgress.course.language.id}/courses/${activeProgress.course.id}`
     )
   }
-
-  /* --------------- Load progress --------------- */
-
-  // Loads progress once and keeps request failures in the page state.
-  useEffect(() => {
-    // Separates the async request from the effect lifecycle.
-    const loadProgress = async () => {
-      try {
-        const data = await getMyProgress()
-        setProgress(data)
-      } catch (error) {
-        setError(
-          error instanceof Error
-            ? error.message
-            : 'No se pudo cargar el progreso'
-        )
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    loadProgress()
-  }, [])
 
   return (
     <div className={styles.dashboard}>
