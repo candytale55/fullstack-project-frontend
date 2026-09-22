@@ -1,6 +1,6 @@
 /* Renders a simple studied/not-studied grid grouped by calendar month. */
 
-import { buildHeatmapMonths } from './studyHeatmapUtils'
+import { buildHeatmapMonths, formatDayLabel } from './studyHeatmapUtils'
 import styles from './StudyHeatmap.module.css'
 
 
@@ -35,6 +35,7 @@ export default function StudyHeatmap({
                     >
                         {month.days.map(({ key, weekday, week }) => {
                             const studied = studiedDays.has(key)
+                            const label = formatDayLabel(key, studied)
 
                             return (
                                 <div
@@ -48,16 +49,8 @@ export default function StudyHeatmap({
                                         gridRow: weekday + 1,
                                         gridColumn: week + 1,
                                     }}
-                                    title={
-                                        studied
-                                            ? `${key}: estudiado`
-                                            : `${key}: no estudiado`
-                                    }
-                                    aria-label={
-                                        studied
-                                            ? `${key}: estudiado`
-                                            : `${key}: no estudiado`
-                                    }
+                                    title={label}
+                                    aria-label={label}
                                 />
                             )
                         })}

@@ -34,9 +34,9 @@
     width: 0.75rem;
     height: 0.75rem;
 
-    /* Muted gray already meets 3:1 contrast against the card surface. */
-    background-color: var(--color-text-muted);
-    border: 1px solid var(--color-text-muted);
+    /* Unstudied days are hollow; only the dark border marks the cell. */
+    background-color: transparent;
+    border: 1px solid var(--color-text);
     border-radius: var(--border-radius-sm);
 }
 

@@ -48,32 +48,22 @@ const getVisibleMonths = (): { year: number; month: number }[] => {
 }
 
 
-// Builds only the real days of one calendar month, capped at today when it is the current month.
+// Builds every real YYYY-MM-DD date of one calendar month, oldest first.
 const buildMonthDays = (
     year: number,
     month: number
 ): HeatmapDay[] => {
     const days: HeatmapDay[] = []
 
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-
     const firstDay = new Date(year, month, 1)
     const firstWeekday = firstDay.getDay()
 
+    // Day 0 of the next month is always the last real day of this month.
     const lastDayOfMonth = new Date(year, month + 1, 0)
-
-    const isCurrentMonth =
-        year === today.getFullYear() &&
-        month === today.getMonth()
-
-    const lastVisibleDay = isCurrentMonth
-        ? today
-        : lastDayOfMonth
 
     for (
         const date = new Date(firstDay);
-        date <= lastVisibleDay;
+        date <= lastDayOfMonth;
         date.setDate(date.getDate() + 1)
     ) {
         // Groups each day under the week column it belongs to inside this month only.
@@ -110,4 +100,26 @@ export const buildHeatmapMonths = (): HeatmapMonth[] => {
             weeks,
         }
     })
+}
+
+
+const dayFormatter = new Intl.DateTimeFormat('es-ES', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+})
+
+// Builds an accessible "23 septiembre 2026 — Día de estudio" style label.
+export const formatDayLabel = (
+    key: string,
+    studied: boolean
+): string => {
+    const [year, month, day] = key.split('-').map(Number)
+    const date = new Date(year, month - 1, day)
+
+    const status = studied
+        ? 'Día de estudio'
+        : 'Sin actividad'
+
+    return `${dayFormatter.format(date)} — ${status}`
 }

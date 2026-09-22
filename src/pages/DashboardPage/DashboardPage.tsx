@@ -91,7 +91,7 @@ export default function DashboardPage() {
       )}
 
       {!loading && !error && (
-        <section className={styles.card}>
+        <section className={`${styles.card} ${styles.heatmapCard}`}>
           <div>
             <h2 className={styles.heatmapTitle}>
               Actividad de estudio
