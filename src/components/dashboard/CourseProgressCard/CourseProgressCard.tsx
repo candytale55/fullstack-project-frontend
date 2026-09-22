@@ -39,7 +39,9 @@ export default function CourseProgressCard({
 
             <div className={styles.courseInfo}>
                 <h3>{progress.course.title}</h3>
-                <p>Nivel: {progress.course.level}</p>
+                <p className={styles.courseLevel}>
+                    {progress.course.level}
+                </p>
             </div>
 
             <div className={styles.stats}>
