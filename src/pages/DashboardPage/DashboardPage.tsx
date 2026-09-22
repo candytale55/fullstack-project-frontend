@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router'
 
 import useAuth from '../../hooks/useAuth'
 import { getMyProgress } from '../../services/progressService'
+import CourseProgressCard from '../../components/dashboard/CourseProgressCard/CourseProgressCard'
 import type { CourseProgress } from '../../types/progress'
 
 import Alert from '../../components/ui/Alert/Alert'
@@ -99,80 +100,17 @@ export default function DashboardPage() {
 
       {!loading && !error && progress.length > 0 && (
         <div className={styles.dashboardGrid}>
-          {progress.map((courseProgress, index) => {
-            // Avoids invalid percentages when no questions were answered.
-            const precision =
-              courseProgress.questionsAnswered === 0
-                ? 0
-                : courseProgress.correctAnswers /
-                courseProgress.questionsAnswered * 100
-
-            // Backend dates arrive as strings and may be absent for new records.
-            const lastActivity =
-              courseProgress.lastStudiedAt
-                ? new Date(
-                  courseProgress.lastStudiedAt
-                ).toLocaleDateString('es-ES')
-                : 'Sin actividad'
-
-            return (
-              <section
-                className={styles.card}
-                key={courseProgress.id}
-              >
-                <h2>
-                  {courseProgress.course.language.name}
-                </h2>
-
-                <div className={styles.courseInfo}>
-                  <h3>{courseProgress.course.title}</h3>
-                  <p>Nivel: {courseProgress.course.level}</p>
-                </div>
-
-                <div className={styles.stats}>
-                  <div className={styles.stat}>
-                    <strong>
-                      {courseProgress.completedSessions}
-                    </strong>
-                    <span>Sesiones</span>
-                  </div>
-
-                  <div className={styles.stat}>
-                    <strong>
-                      {courseProgress.questionsAnswered}
-                    </strong>
-                    <span>Preguntas respondidas</span>
-                  </div>
-
-                  <div className={styles.stat}>
-                    <strong>
-                      {courseProgress.correctAnswers}
-                    </strong>
-                    <span>Respuestas correctas</span>
-                  </div>
-
-                  <div className={styles.stat}>
-                    <strong>{precision.toFixed(0)}%</strong>
-                    <span>Precisión</span>
-                  </div>
-                </div>
-
-                <p>
-                  Última actividad: {lastActivity}
-                </p>
-
-                {index === 0 && (
-                  <Button
-                    type="button"
-                    className={styles.continueButton}
-                    onClick={handleContinueStudying}
-                  >
-                    Continuar estudiando
-                  </Button>
-                )}
-              </section>
-            )
-          })}
+          {progress.map((courseProgress) => (
+            <CourseProgressCard
+              key={courseProgress.id}
+              progress={courseProgress}
+              onContinue={
+                courseProgress.id === progress[0].id
+                  ? handleContinueStudying
+                  : undefined
+              }
+            />
+          ))}
         </div>
       )}
     </div>
