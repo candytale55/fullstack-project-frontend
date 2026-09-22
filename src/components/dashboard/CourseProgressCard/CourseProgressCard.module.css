@@ -1,4 +1,6 @@
 .card {
+    min-width: 0;
+
     padding: var(--space-lg);
 
     display: flex;
@@ -30,6 +32,7 @@
 
 .courseInfo h3 {
     font-size: 1.5rem;
+    overflow-wrap: anywhere;
 }
 
 .stats {
@@ -39,6 +42,8 @@
 }
 
 .stat {
+    min-width: 0;
+
     padding: var(--space-md);
 
     display: flex;
@@ -56,9 +61,21 @@
 .stat span {
     color: var(--color-text-muted);
     font-size: 0.9rem;
+    overflow-wrap: anywhere;
 }
 
 .continueButton {
     align-self: flex-start;
     margin-top: var(--space-sm);
+}
+
+@media (max-width: 640px) {
+    .card {
+        padding: var(--space-md);
+    }
+
+    .continueButton {
+        width: 100%;
+        min-height: 2.75rem;
+    }
 }
