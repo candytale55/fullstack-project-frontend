@@ -1,4 +1,4 @@
-/* Loads unit conjugation data and delegates the interactive session to ConjugationExercise. */
+/* Loads unit data through the conjugation service and passes it to the exercise component. */
 
 import { useEffect, useState } from 'react'
 
@@ -15,6 +15,9 @@ import {
   getPortugueseVerbConjugationsByUnit
 } from '../../components/exercises/ConjugationExercise/portugueseVerbConjugationService'
 
+import {
+  saveStudySession
+} from '../../services/progressService'
 
 export default function ExercisePage() {
 
@@ -23,6 +26,7 @@ export default function ExercisePage() {
     courseId,
     unitId
   } = useParams()
+
 
   const navigate = useNavigate()
 
@@ -37,11 +41,9 @@ export default function ExercisePage() {
     useState<string | null>(null)
 
 
-  /* ---------------------------------- */
-  /* Load conjugations                  */
-  /* ---------------------------------- */
+  /* --------------- Load data --------------- */
 
-  /* Fetch only when the route identifies the unit dataset. */
+  // Avoids an API request when the route has no unit identifier.
   useEffect(() => {
 
     if (!unitId) {
@@ -83,15 +85,33 @@ export default function ExercisePage() {
   }, [unitId])
 
 
-  /* ---------------------------------- */
-  /* Exit exercise                      */
-  /* ---------------------------------- */
 
-  /*
-   * Returns the user to the Units page
-   * of the current course.
-   */
-  /* Return to the course unit list while preserving the current course context. */
+  /* --------------- Save progress --------------- */
+
+  // Connects the completed session to the authenticated course progress endpoint.
+  const handleSessionComplete = async (
+    result: {
+      questionsAnswered: number
+      correctAnswers: number
+    }
+  ) => {
+
+    if (!courseId) {
+      throw new Error(
+        'Course ID is missing'
+      )
+    }
+
+
+    await saveStudySession(
+      courseId,
+      result
+    )
+  }
+
+  /* --------------- Navigation --------------- */
+
+  // Returns to the current course's unit list.
   const handleExit = () => {
 
     navigate(
@@ -100,9 +120,7 @@ export default function ExercisePage() {
   }
 
 
-  /* ---------------------------------- */
-  /* Render states                      */
-  /* ---------------------------------- */
+  /* --------------- Render states --------------- */
 
   if (!unitId) {
     return <p>Unidad no encontrada</p>
@@ -123,6 +141,7 @@ export default function ExercisePage() {
     <ConjugationExercise
       conjugations={conjugations}
       onExit={handleExit}
+      onSessionComplete={handleSessionComplete}
       languageName="Português"
       courseName="Conjugación de verbos"
       unitName={conjugations[0]?.tense ?? ''}
