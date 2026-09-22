@@ -27,8 +27,13 @@ export default function StudyHeatmap({
                         {month.label}
                     </p>
 
-                    <div className={styles.monthGrid}>
-                        {month.days.map(({ key, weekday }) => {
+                    <div
+                        className={styles.monthGrid}
+                        style={{
+                            gridTemplateColumns: `repeat(${month.weeks}, 0.75rem)`,
+                        }}
+                    >
+                        {month.days.map(({ key, weekday, week }) => {
                             const studied = studiedDays.has(key)
 
                             return (
@@ -39,7 +44,10 @@ export default function StudyHeatmap({
                                             ? `${styles.day} ${styles.studied}`
                                             : styles.day
                                     }
-                                    style={{ gridRow: weekday + 1 }}
+                                    style={{
+                                        gridRow: weekday + 1,
+                                        gridColumn: week + 1,
+                                    }}
                                     title={
                                         studied
                                             ? `${key}: estudiado`

@@ -18,11 +18,11 @@
     color: var(--color-text-muted);
     font-size: 0.85rem;
     font-weight: 600;
+    white-space: nowrap;
 }
 
 .monthGrid {
     display: grid;
-    grid-auto-flow: column;
     grid-template-rows: repeat(7, 0.75rem);
     gap: var(--space-xs);
 
@@ -34,14 +34,15 @@
     width: 0.75rem;
     height: 0.75rem;
 
-    background-color: var(--color-background);
-    border: 1px solid var(--color-border);
+    /* Muted gray already meets 3:1 contrast against the card surface. */
+    background-color: var(--color-text-muted);
+    border: 1px solid var(--color-text-muted);
     border-radius: var(--border-radius-sm);
 }
 
 .studied {
-    background-color: var(--color-exercise-success-background);
-    border-color: var(--color-exercise-success-border);
+    background-color: var(--color-exercise-success-text);
+    border-color: var(--color-exercise-success-text);
 }
 
 @media (max-width: 640px) {
