@@ -1,6 +1,10 @@
-/* Runs the interactive conjugation session from questions generated from API data. */
+/* Runs the conjugation session using questions generated from API records. */
 
-import { useEffect, useRef, useState } from 'react'
+import {
+  useCallback,
+  useMemo,
+  useState,
+} from 'react'
 
 import styles from './ConjugationExercise.module.css'
 
@@ -14,9 +18,7 @@ import type {
 } from './conjugationExerciseUtils'
 
 
-/* ---------------------------------- */
-/* Types                              */
-/* ---------------------------------- */
+/* --------------- Types --------------- */
 
 export type PortugueseVerbForms = {
   eu?: string
@@ -44,119 +46,109 @@ export type PortugueseVerbConjugation = {
   curriculumTags: string[]
 }
 
-
 type ConjugationExerciseProps = {
   conjugations: PortugueseVerbConjugation[]
+
   onExit: () => void
+
+  onSessionComplete: (
+    result: StudySessionResult
+  ) => Promise<void>
 
   courseName: string
   languageName: string
   unitName: string
 }
 
-/* ---------------------------------- */
-/* Component                          */
-/* ---------------------------------- */
+
+type StudySessionResult = {
+  questionsAnswered: number
+  correctAnswers: number
+}
+
+/* --------------- Component --------------- */
 
 export default function ConjugationExercise({
   conjugations,
   onExit,
+  onSessionComplete,
   courseName,
   languageName,
   unitName,
 }: ConjugationExerciseProps) {
 
-  /*
-   * Creates all possible questions from
-   * the conjugation data received from the API.
-   */
-  const allQuestions =
-    createConjugationQuestions(
-      conjugations
-    )
+  // Reuse derived questions while answer state changes during typing.
+  const allQuestions = useMemo(
+    () => createConjugationQuestions(conjugations),
+    [conjugations]
+  )
 
 
-  /* ---------------------------------- */
-  /* State                              */
-  /* ---------------------------------- */
+  /* --------------- States --------------- */
 
-  /*
-   * Default session size.
-   */
   const [questionCount, setQuestionCount] =
     useState(10)
 
-
-  /*
-   * Questions selected and randomized
-   * for the current exercise session.
-   */
   const [
     sessionQuestions,
     setSessionQuestions
   ] = useState<ConjugationQuestion[]>([])
 
 
-  const [currentIndex, setCurrentIndex] =
+  const [correctAnswers, setCorrectAnswers] =
     useState(0)
-
 
   const [userAnswer, setUserAnswer] =
     useState('')
 
-
   const [isChecked, setIsChecked] =
     useState(false)
-
 
   const [hasStarted, setHasStarted] =
     useState(false)
 
-
   const [isFinished, setIsFinished] =
     useState(false)
 
-  const feedbackRef =
-    useRef<HTMLDivElement>(null)
+  const [currentIndex, setCurrentIndex] =
+    useState(0)
 
-  useEffect(() => {
-    if (isChecked) {
-      feedbackRef.current?.focus()
-    }
-  }, [isChecked])
+  const [isSavingProgress, setIsSavingProgress] =
+    useState(false)
+
+  const [progressError, setProgressError] =
+    useState<string | null>(null)
+
+  // Focuses the action button when feedback mounts after submission.
+  const actionButtonRef = useCallback(
+    (button: HTMLButtonElement | null) => {
+      button?.focus()
+    },
+    []
+  )
 
 
-  /* ---------------------------------- */
-  /* Start exercise                     */
-  /* ---------------------------------- */
+  /* --------------- Start exercise --------------- */
 
-  /*
-   * Randomizes all available questions
-   * and selects only the requested amount.
-   */
+  // Randomizes questions and limits the session to the requested amount.
+
   const handleStart = () => {
 
     if (allQuestions.length === 0) {
       return
     }
 
-
-    /*
-     * Prevent values below 1 or above
-     * the available number of questions.
-     */
+    // Keeps the requested amount within the available question range.
     const amount =
       Math.min(
         Math.max(questionCount, 1),
         allQuestions.length
       )
 
-
     const shuffled =
       shuffleQuestions(
         allQuestions
       )
-
 
     setSessionQuestions(
       shuffled.slice(0, amount)
@@ -165,26 +157,18 @@ export default function ConjugationExercise({
     setCurrentIndex(0)
     setUserAnswer('')
     setIsChecked(false)
+
+    setCorrectAnswers(0)
+    setProgressError(null)
+
     setIsFinished(false)
     setHasStarted(true)
   }
 
+  /* --------------- Normalize answers --------------- */
 
-  /* ---------------------------------- */
-  /* Normalize answers                  */
-  /* ---------------------------------- */
+  // Ignores case and repeated spaces while preserving Portuguese accents.
 
-  /*
-   * Allows:
-   *
-   * abandono
-   * ABANDONO
-   * eu abandono
-   * EU ABANDONO
-   * Eu abandono
-   *
-   * Accents are still required.
-   */
   const normalizeAnswer = (
     value: string
   ): string => {
@@ -195,10 +179,7 @@ export default function ConjugationExercise({
       .replace(/\s+/g, ' ')
   }
 
-
-  /* ---------------------------------- */
-  /* No available questions             */
-  /* ---------------------------------- */
+  /* --------------- Empty state --------------- */
 
   if (allQuestions.length === 0) {
 
@@ -222,14 +203,9 @@ export default function ConjugationExercise({
   }
 
 
-  /* ---------------------------------- */
-  /* Exercise setup                     */
-  /* ---------------------------------- */
+  /* --------------- Exercise setup --------------- */
 
-  /*
-   * This screen appears before
-   * the exercise begins.
-   */
+  // Collects the session size before the first question is shown.
   if (!hasStarted) {
     return (
       <section className={styles.setupPage}>
@@ -291,21 +267,16 @@ export default function ConjugationExercise({
               >
                 Salir
               </button>
-
             </div>
-
           </form>
-
         </div>
-
       </section>
     )
   }
 
+  /* --------------- Exercise finished --------------- */
 
-  /* ---------------------------------- */
-  /* Exercise finished                  */
-  /* ---------------------------------- */
+  // Shows the result state and allows the user to repeat or leave.
 
   if (isFinished) {
     return (
@@ -344,29 +315,17 @@ export default function ConjugationExercise({
             >
               Salir
             </button>
-
           </div>
-
         </div>
-
       </section>
     )
   }
 
-
-  /* ---------------------------------- */
-  /* Current question                   */
-  /* ---------------------------------- */
+  /* --------------- Current question --------------- */
 
   const currentQuestion =
     sessionQuestions[currentIndex]
-
-
-  /*
-   * Defensive check.
-   * Normally this should not occur once
-   * the exercise has started.
-   */
+  // Protects against an invalid session index before rendering question data.
   if (!currentQuestion) {
 
     return (
@@ -389,27 +348,22 @@ export default function ConjugationExercise({
   }
 
 
-  /* ---------------------------------- */
-  /* Check answer                       */
-  /* ---------------------------------- */
+  /* --------------- Check answer --------------- */
 
   const normalizedUserAnswer =
     normalizeAnswer(
       userAnswer
     )
 
-
   const normalizedCorrectAnswer =
     normalizeAnswer(
       currentQuestion.answer
     )
 
-
   const normalizedAnswerWithPerson =
     normalizeAnswer(
       `${currentQuestion.person} ${currentQuestion.answer}`
     )
-
 
   const isCorrect =
     normalizedUserAnswer ===
@@ -417,41 +371,68 @@ export default function ConjugationExercise({
     normalizedUserAnswer ===
     normalizedAnswerWithPerson
 
-
+  /* --------------- Submit answer --------------- */
   const handleSubmit = (
-    event: React.FormEvent<HTMLFormElement>
+    event: React.SubmitEvent<HTMLFormElement>
   ) => {
-
     event.preventDefault()
-
 
     if (!userAnswer.trim()) {
       return
     }
-
-
+    // Count correct answers only once, when the response is submitted.
+    if (isCorrect) {
+      setCorrectAnswers(
+        previous =>
+          previous + 1
+      )
+    }
     setIsChecked(true)
   }
 
 
-  /* ---------------------------------- */
-  /* Next question                      */
-  /* ---------------------------------- */
+  /* --------------- Next question --------------- */
 
-  const handleNext = () => {
+  // Saves the final session or advances to the next question.
+
+  const handleNext = async () => {
 
     const isLastQuestion =
       currentIndex ===
       sessionQuestions.length - 1
 
-
     if (isLastQuestion) {
+      setIsSavingProgress(true)
+      setProgressError(null)
 
-      setIsFinished(true)
+      // Persistence happens only after the last answer has been checked.
+      try {
+        await onSessionComplete({
+          questionsAnswered:
+            sessionQuestions.length,
+
+          correctAnswers:
+            correctAnswers,
+        })
+
+        setIsFinished(true)
+
+      } catch (error) {
+        console.error(
+          'Error saving progress:',
+          error
+        )
+
+        setProgressError(
+          'No se pudo guardar el progreso.'
+        )
+
+      } finally {
+        setIsSavingProgress(false)
+      }
 
       return
     }
-
 
     setUserAnswer('')
     setIsChecked(false)
@@ -462,19 +443,14 @@ export default function ConjugationExercise({
     )
   }
 
-
-  /* ---------------------------------- */
-  /* Render exercise                    */
   /* ---------------------------------- */
 
   return (
     <section className={styles.exercisePage}>
 
-      {/* Information outside the exercise card */}
       <header className={styles.exerciseHeader}>
 
         <div className={styles.courseInfo}>
-
           <p className={styles.unitName}>
             {unitName}
           </p>
@@ -484,10 +460,7 @@ export default function ConjugationExercise({
           <p className={styles.languageName}>
             {languageName}
           </p>
-
-
         </div>
-
 
         <button
           type="button"
@@ -500,34 +473,24 @@ export default function ConjugationExercise({
       </header>
 
 
-      {/* Exercise card */}
       <div className={styles.exerciseCard}>
-
-        {/* Darker section */}
         <div className={styles.cardHeader}>
-
           <p className={styles.progress}>
             Pregunta {currentIndex + 1}
             {' / '}
             {sessionQuestions.length}
           </p>
-
           <p className={styles.tense}>
             {currentQuestion.tense}
           </p>
-
         </div>
 
-
-        {/* Lighter section */}
         <div className={styles.cardBody}>
-
           <h2 className={styles.question}>
             {currentQuestion.person}
             {' + '}
             {currentQuestion.infinitive}
           </h2>
-
 
           <form
             className={styles.form}
@@ -542,6 +505,7 @@ export default function ConjugationExercise({
             </label>
 
             <input
+              key={currentQuestion.id}
               id="conjugationAnswer"
               className={styles.input}
               type="text"
@@ -555,8 +519,6 @@ export default function ConjugationExercise({
               autoFocus
               autoComplete="off"
             />
-
-
             {!isChecked && (
               <button
                 type="submit"
@@ -565,18 +527,12 @@ export default function ConjugationExercise({
                 Comprobar
               </button>
             )}
-
           </form>
 
-
           {isChecked && (
-
             <div
-              ref={feedbackRef}
               className={styles.feedback}
-              tabIndex={-1}
             >
-
               <div
                 className={
                   isCorrect
@@ -590,18 +546,15 @@ export default function ConjugationExercise({
                   : 'Incorrecto'}
               </div>
 
-
               {!isCorrect && (
                 <p className={styles.correctAnswer}>
                   Respuesta correcta:
                   {' '}
-
                   <strong>
                     {currentQuestion.answer}
                   </strong>
                 </p>
               )}
-
 
               {currentQuestion.pronunciation && (
                 <p className={styles.pronunciation}>
@@ -611,25 +564,31 @@ export default function ConjugationExercise({
                 </p>
               )}
 
+              {progressError && (
+                <p>
+                  {progressError}
+                </p>
+              )}
 
               <button
                 type="button"
                 className={styles.primaryButton}
+                ref={actionButtonRef}
                 onClick={handleNext}
+                disabled={isSavingProgress}
               >
-                {currentIndex ===
-                  sessionQuestions.length - 1
-                  ? 'Finalizar'
-                  : 'Siguiente'}
+                {isSavingProgress
+                  ? 'Guardando...'
+                  : currentIndex ===
+                    sessionQuestions.length - 1
+                    ? 'Finalizar'
+                    : 'Siguiente'}
               </button>
 
             </div>
           )}
-
         </div>
-
       </div>
-
     </section>
   )
 }

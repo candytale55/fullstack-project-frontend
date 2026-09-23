@@ -10,7 +10,6 @@ import { Link, useParams } from 'react-router'
 
 import {
   getCourseById,
-  getCourseUnits,
 } from '../../services/courseService'
 
 import type {
@@ -51,13 +50,8 @@ export default function UnitsPage() {
       }
 
       try {
-        const [
-          courseData,
-          unitsData,
-        ] = await Promise.all([
-          getCourseById(courseId),
-          getCourseUnits(courseId),
-        ])
+        const courseData =
+          await getCourseById(courseId)
 
         if (courseData.languageId !== languageId) {
           setError('Course not found')
@@ -65,7 +59,12 @@ export default function UnitsPage() {
         }
 
         setCourse(courseData)
-        setUnits(unitsData)
+        setUnits(
+          [...courseData.units].sort(
+            (firstUnit, secondUnit) =>
+              firstUnit.order - secondUnit.order
+          )
+        )
 
       } catch (error) {
         setError(
@@ -138,8 +137,8 @@ export default function UnitsPage() {
             <article
               key={unit.id}
               className={`${styles.unitCard} ${hasExercises
-                  ? styles.unitCardAvailable
-                  : ''
+                ? styles.unitCardAvailable
+                : ''
                 }`}
             >
               <div className={styles.unitInfo}>

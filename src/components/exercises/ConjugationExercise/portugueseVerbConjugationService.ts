@@ -1,4 +1,4 @@
-/* Fetches Portuguese conjugations for ExercisePage from the mounted backend endpoint. */
+/* Fetches Portuguese conjugations for ExercisePage from the backend API. */
 
 import type {
     PortugueseVerbConjugation
@@ -8,17 +8,9 @@ import type {
 const API_URL = import.meta.env.VITE_API_URL
 
 
-/* ---------------------------------- */
-/* Get conjugations by unit           */
-/* ---------------------------------- */
+/* --------------- API request --------------- */
 
-/*
- * Gets all Portuguese verb conjugations
- * associated with one course unit.
- *
- * The unitId corresponds to the MongoDB _id
- * of the embedded unit inside the Course.
- */
+// The unit id is the MongoDB id of an embedded Course unit.
 export const getPortugueseVerbConjugationsByUnit =
     async (
         unitId: string

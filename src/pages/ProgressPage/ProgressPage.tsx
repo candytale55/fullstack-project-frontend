@@ -1,14 +1,32 @@
-/* Presents the temporary progress view from dashboard data until the progress API is connected. */
+/* Loads all authenticated course progress and presents each course independently. */
 
-import {
-    activeCourseMock,
-    dashboardStatsMock,
-} from '../../mocks/dashboardMock'
+import { useNavigate } from 'react-router'
+
+import useProgress from '../../hooks/useProgress'
+import CourseProgressCard from '../../components/dashboard/CourseProgressCard/CourseProgressCard'
+
+import Alert from '../../components/ui/Alert/Alert'
+import Loader from '../../components/ui/Loader/Loader'
 
 import styles from './ProgressPage.module.css'
 
 
 export default function ProgressPage() {
+    const navigate = useNavigate()
+
+    const {
+        progress,
+        loading,
+        error,
+    } = useProgress()
+
+    // Keeps each course card responsible only for its own navigation target.
+    const handleContinue = (courseId: string, languageId: string) => {
+        navigate(
+            `/languages/${languageId}/courses/${courseId}`
+        )
+    }
+
     return (
         <div className={styles.progressPage}>
 
@@ -17,40 +35,37 @@ export default function ProgressPage() {
                 <p>Consulta tu progreso</p>
             </header>
 
-            <section className={styles.section}>
-                <h2>Curso Activo</h2>
-                <h3>{activeCourseMock.title}</h3>
-                <p>Nivel: {activeCourseMock.level}</p>
-                <p>Progreso: {activeCourseMock.progress}</p>
-                <p>
-                    {activeCourseMock.completedUnits} de{' '}
-                    {activeCourseMock.totalUnits} unidades
-                    completadas
-                </p>
-            </section>
+            {loading && <Loader />}
 
-            <section className={styles.section}>
-                <h2>Actividades</h2>
-                <div>
-                    <strong>
-                        {dashboardStatsMock.completedExercises}
-                    </strong>
+            {!loading && error && (
+                <Alert variant="error">
+                    {error}
+                </Alert>
+            )}
 
-                    <span>
-                        Ejercicios completados
-                    </span>
+            {!loading && !error && progress.length === 0 && (
+                <Alert>
+                    Todavía no has realizado ninguna sesión de estudio.
+                </Alert>
+            )}
+
+            {!loading && !error && progress.length > 0 && (
+                <div className={styles.progressGrid}>
+                    {progress.map((courseProgress) => (
+                        <CourseProgressCard
+                            key={courseProgress.id}
+                            progress={courseProgress}
+                            onContinue={() =>
+                                handleContinue(
+                                    courseProgress.course.id,
+                                    courseProgress.course.language.id
+                                )
+                            }
+                            continueLabel="Continuar"
+                        />
+                    ))}
                 </div>
-
-                <div>
-                    <strong>
-                        {dashboardStatsMock.studyStreak}
-                    </strong>
-
-                    <span>
-                        Días de racha
-                    </span>
-                </div>
-            </section>
+            )}
         </div>
 
     )

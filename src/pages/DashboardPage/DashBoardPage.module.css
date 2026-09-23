@@ -8,6 +8,11 @@
     gap: var(--space-lg);
 }
 
+
+/* ---------------------------------- */
+/* Header                             */
+/* ---------------------------------- */
+
 .header {
     display: flex;
     flex-direction: column;
@@ -23,14 +28,29 @@
     color: var(--color-text-muted);
 }
 
+
+/* ---------------------------------- */
+/* Main dashboard layout              */
+/* ---------------------------------- */
+
 .dashboardGrid {
+    width: 100%;
+
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--space-lg);
+
     align-items: start;
 }
 
+
+/* ---------------------------------- */
+/* Cards                              */
+/* ---------------------------------- */
+
 .card {
+    min-width: 0;
+
     padding: var(--space-lg);
 
     display: flex;
@@ -43,70 +63,106 @@
     border-radius: var(--border-radius-md);
 }
 
-.card h2,
-.card h3,
-.card p {
-    margin: 0;
-}
-
-.card h2 {
-    font-size: 1rem;
-    color: var(--color-text-muted);
-}
-
-.courseInfo {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
-}
-
-.courseInfo h3 {
-    font-size: 1.5rem;
-}
-
-.progressInfo {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
-}
-
-.progressInfo p:last-child {
-    color: var(--color-text-muted);
-}
-
 .continueButton {
     align-self: flex-start;
     margin-top: var(--space-sm);
 }
 
-.stats {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-md);
+
+/* ---------------------------------- */
+/* Heatmap card                       */
+/* ---------------------------------- */
+
+.heatmapCard {
+    /* Looser spacing than the default card for the title/heatmap/legend blocks. */
+    gap: var(--space-lg);
 }
 
-.stat {
-    padding: var(--space-md);
+.heatmapTitle {
+    margin: 0;
 
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
-
-    background-color: var(--color-background);
-    border-radius: var(--border-radius-md);
+    color: var(--color-text);
+    font-size: 1.1rem;
+    font-weight: 600;
 }
 
-.stat strong {
-    font-size: 1.5rem;
-}
+.heatmapSubtitle {
+    margin: 0;
 
-.stat span {
     color: var(--color-text-muted);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
-@media (min-width: 768px) {
+
+/* ---------------------------------- */
+/* Heatmap legend                     */
+/* ---------------------------------- */
+
+.legend {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    column-gap: var(--space-lg);
+    row-gap: var(--space-sm);
+
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+}
+
+.legendItem {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    white-space: nowrap;
+}
+
+.legendSwatch {
+    display: inline-block;
+    flex: 0 0 auto;
+
+    width: 0.75rem;
+    height: 0.75rem;
+
+    background-color: transparent;
+
+    border: 1px solid var(--color-text);
+    border-radius: var(--border-radius-sm);
+}
+
+.legendSwatchStudied {
+    background-color: var(--color-exercise-success-text);
+    border-color: var(--color-exercise-success-text);
+}
+
+
+/* ---------------------------------- */
+/* Desktop                            */
+/* ---------------------------------- */
+
+@media (min-width: 900px) {
     .dashboardGrid {
-        grid-template-columns: minmax(0, 2fr) minmax(16rem, 1fr);
+        grid-template-columns:
+            minmax(0, 0.9fr)
+            minmax(0, 1.1fr);
+    }
+}
+
+
+/* ---------------------------------- */
+/* Mobile                             */
+/* ---------------------------------- */
+
+@media (max-width: 640px) {
+    .dashboard {
+        gap: var(--space-md);
+    }
+
+    .heatmapCard {
+        padding: var(--space-md);
+    }
+
+    .legend {
+        column-gap: var(--space-md);
     }
 }

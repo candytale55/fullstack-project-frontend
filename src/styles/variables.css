@@ -8,6 +8,21 @@
   --color-route-highlight: #d6ecea;
   --color-route-highlight-border: #5f9f9a;
 
+  /* Exercise UI */
+  --color-exercise-surface: #ffffff;
+  --color-exercise-border: #d8d8d8;
+  --color-exercise-input-border: #bdbdbd;
+  --color-exercise-button-border: #999999;
+  --color-exercise-header: #eeeeee;
+  --color-exercise-hover: #e4e4e4;
+  --color-exercise-shadow: rgba(0, 0, 0, 0.08);
+  --color-exercise-success-text: #155724;
+  --color-exercise-success-background: #d4edda;
+  --color-exercise-success-border: #b7dfc1;
+  --color-exercise-error-text: #721c24;
+  --color-exercise-error-background: #f8d7da;
+  --color-exercise-error-border: #efb8bd;
+
   /* Spacing */
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
