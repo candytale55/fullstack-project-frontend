@@ -87,36 +87,39 @@ export default function DashboardPage() {
             progress={lastCourse}
             onContinue={handleContinueStudying}
           />
+
+          <section className={`${styles.card} ${styles.heatmapCard}`}>
+            <div>
+              <h2 className={styles.heatmapTitle}>
+                Actividad de estudio
+              </h2>
+
+              <p className={styles.heatmapSubtitle}>
+                Últimos 4 meses
+              </p>
+            </div>
+
+            <StudyHeatmap studyDays={studyDays} />
+
+            <div className={styles.legend}>
+              <span className={styles.legendItem}>
+                <span
+                  className={`${styles.legendSwatch} ${styles.legendSwatchStudied}`}
+                  aria-hidden="true"
+                />
+                Día de estudio
+              </span>
+
+              <span className={styles.legendItem}>
+                <span
+                  className={styles.legendSwatch}
+                  aria-hidden="true"
+                />
+                Sin actividad
+              </span>
+            </div>
+          </section>
         </div>
-      )}
-
-      {!loading && !error && (
-        <section className={`${styles.card} ${styles.heatmapCard}`}>
-          <div>
-            <h2 className={styles.heatmapTitle}>
-              Actividad de estudio
-            </h2>
-            <p className={styles.heatmapSubtitle}>
-              Últimos 3 meses
-            </p>
-          </div>
-
-          <StudyHeatmap studyDays={studyDays} />
-
-          <div className={styles.legend}>
-            <span className={styles.legendItem}>
-              <span
-                className={`${styles.legendSwatch} ${styles.legendSwatchStudied}`}
-              />
-              Día de estudio
-            </span>
-
-            <span className={styles.legendItem}>
-              <span className={styles.legendSwatch} />
-              Sin actividad
-            </span>
-          </div>
-        </section>
       )}
     </div>
   )

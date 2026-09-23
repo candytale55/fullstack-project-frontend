@@ -32,8 +32,8 @@ const formatMonthAbbreviation = (date: Date) =>
 // Returns the current month plus the two previous ones, oldest first.
 const getVisibleMonths = (): { year: number; month: number }[] => {
     const today = new Date()
-
-    return [2, 1, 0].map((offset) => {
+    /* current month and the three previous months. */
+    return [3, 2, 1, 0].map((offset) => {
         const date = new Date(
             today.getFullYear(),
             today.getMonth() - offset,
