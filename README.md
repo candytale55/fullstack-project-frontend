@@ -70,7 +70,7 @@ El ejercicio de conjugación permite seleccionar el número de preguntas, respon
 
 ### Dashboard actual
 
-![Dashboard Screenshot](./docs/shots/scsh-08-mock-dashboard.png)
+![Dashboard Screenshot](./docs/shots/scsh-08-dashboard.png)
 
 ---
 
