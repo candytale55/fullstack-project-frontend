@@ -1,4 +1,5 @@
 import {
+    useCallback,
     useMemo,
     useState,
     type SubmitEvent,
@@ -44,6 +45,13 @@ export default function VocabularyExercise({
             [vocabulary]
         )
 
+    // Focuses the action button when feedback mounts after submission.
+    const actionButtonRef = useCallback(
+        (button: HTMLButtonElement | null) => {
+            button?.focus()
+        },
+        []
+    )
 
     const [questionCount, setQuestionCount] =
         useState(10)
@@ -71,10 +79,8 @@ export default function VocabularyExercise({
     const [isFinished, setIsFinished] =
         useState(false)
 
-
     const currentItem =
         sessionVocabulary[currentIndex]
-
 
     const isCorrect =
         currentItem
@@ -169,7 +175,8 @@ export default function VocabularyExercise({
 
     if (availableVocabulary.length === 0) {
         return (
-            <section className={styles.exercise}>
+            <section className={styles.exercisePage}>
+
                 <Alert>
                     No hay vocabulario disponible.
                 </Alert>
@@ -188,36 +195,40 @@ export default function VocabularyExercise({
 
     if (!hasStarted) {
         return (
-            <section className={styles.exercise}>
+            <section className={styles.setupPage}>
                 <Card className={styles.setupCard}>
 
-                    <h2>Práctica de vocabulario</h2>
+                    <h2 className={styles.setupTitle}>
+                        Práctica de vocabulario
+                    </h2>
 
-                    <p>
+                    <p className={styles.availableQuestions}>
                         Palabras disponibles:
                         {' '}
                         {availableVocabulary.length}
                     </p>
 
                     <form
-                        className={styles.form}
+                        className={styles.setupForm}
                         onSubmit={(event) => {
                             event.preventDefault()
                             handleStart()
                         }}
                     >
 
-                        <label htmlFor="questionCount">
+                        <label
+                            htmlFor="questionCount"
+                            className={styles.setupLabel}
+                        >
                             Número de preguntas
                         </label>
 
                         <Input
                             id="questionCount"
+                            className={styles.questionCountInput}
                             type="number"
                             min={1}
-                            max={
-                                availableVocabulary.length
-                            }
+                            max={availableVocabulary.length}
                             value={questionCount}
                             onChange={(event) =>
                                 setQuestionCount(
@@ -226,7 +237,7 @@ export default function VocabularyExercise({
                             }
                         />
 
-                        <div className={styles.actions}>
+                        <div className={styles.setupActions}>
                             <Button type="submit">
                                 Comenzar
                             </Button>
@@ -249,24 +260,22 @@ export default function VocabularyExercise({
 
     if (isFinished) {
         return (
-            <section className={styles.exercise}>
-                <Card className={styles.finishedCard}>
+            <section className={styles.setupPage}>
+                <Card className={styles.setupCard}>
 
-                    <h2>Ejercicio terminado</h2>
+                    <h2 className={styles.setupTitle}>
+                        Ejercicio terminado
+                    </h2>
 
                     <p>
                         Has acertado
                         {' '}
-                        <strong>
-                            {correctAnswers}
-                        </strong>
+                        <strong>{correctAnswers}</strong>
                         {' de '}
-                        <strong>
-                            {sessionVocabulary.length}
-                        </strong>
+                        <strong>{sessionVocabulary.length}</strong>
                     </p>
 
-                    <div className={styles.actions}>
+                    <div className={styles.setupActions}>
                         <Button
                             type="button"
                             onClick={handleStart}
@@ -295,28 +304,28 @@ export default function VocabularyExercise({
 
 
     return (
-        <section className={styles.exercise}>
+        <section className={styles.exercisePage}>
 
-            <Card className={styles.vocabularyCard}>
+            <Card className={styles.exerciseCard}>
 
-                <header className={styles.header}>
-                    <span>
+                <header className={styles.cardHeader}>
+                    <span className={styles.progress}>
                         {currentIndex + 1}
                         {' / '}
                         {sessionVocabulary.length}
                     </span>
 
                     {currentItem.partOfSpeech && (
-                        <span>
+                        <span className={styles.tense}>
                             {currentItem.partOfSpeech}
                         </span>
                     )}
                 </header>
 
 
-                <div className={styles.questionArea}>
+                <div className={styles.cardBody}>
 
-                    <p className={styles.instruction}>
+                    <p>
                         Escribe la palabra correcta
                         {' '}
                         {currentItem.languageCode === 'pt'
@@ -324,22 +333,18 @@ export default function VocabularyExercise({
                             : 'en inglés'}
                     </p>
 
-
                     {currentItem.image?.url && (
                         <img
-                            className={styles.image}
                             src={currentItem.image.url}
                             alt=""
                         />
                     )}
 
-
-                    <p className={styles.definition}>
+                    <p className={styles.question}>
                         {currentItem.definition}
                     </p>
 
                 </div>
-
 
                 <form
                     className={styles.form}
@@ -356,12 +361,11 @@ export default function VocabularyExercise({
                     <Input
                         key={currentItem.id}
                         id="vocabularyAnswer"
+                        className={styles.input}
                         type="text"
                         value={userAnswer}
                         onChange={(event) =>
-                            setUserAnswer(
-                                event.target.value
-                            )
+                            setUserAnswer(event.target.value)
                         }
                         disabled={isChecked}
                         autoFocus
@@ -377,33 +381,22 @@ export default function VocabularyExercise({
 
                 </form>
 
-
                 {isChecked && (
                     <div className={styles.feedback}>
 
                         <Alert
-                            variant={
-                                isCorrect
-                                    ? 'success'
-                                    : 'error'
-                            }
+                            variant={isCorrect ? 'success' : 'error'}
                         >
-                            {isCorrect
-                                ? 'Correcto'
-                                : 'Incorrecto'}
+                            {isCorrect ? 'Correcto' : 'Incorrecto'}
                         </Alert>
 
-
                         {!isCorrect && (
-                            <p>
+                            <p className={styles.correctAnswer}>
                                 Respuesta correcta:
                                 {' '}
-                                <strong>
-                                    {currentItem.term}
-                                </strong>
+                                <strong>{currentItem.term}</strong>
                             </p>
                         )}
-
 
                         {currentItem.pronunciation && (
                             <p className={styles.pronunciation}>
@@ -411,24 +404,23 @@ export default function VocabularyExercise({
                             </p>
                         )}
 
-
                         {currentItem.example && (
-                            <p className={styles.example}>
+                            <p>
                                 {currentItem.example}
                             </p>
                         )}
 
-
-                        <Button
+                        <button
+                            ref={actionButtonRef}
                             type="button"
-                            autoFocus
+                            className={styles.primaryButton}
                             onClick={handleNext}
                         >
                             {currentIndex ===
                                 sessionVocabulary.length - 1
                                 ? 'Finalizar'
                                 : 'Siguiente'}
-                        </Button>
+                        </button>
 
                     </div>
                 )}

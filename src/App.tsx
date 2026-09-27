@@ -14,6 +14,7 @@ import ExercisesPage from './pages/ExercisesPage/ExercisesPage.tsx'
 import ExercisePage from './pages/ExercisePage/ExercisePage.tsx'
 import ProgressPage from './pages/ProgressPage/ProgressPage.tsx'
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage.tsx'
+import VocabularyExercisePage from './pages/VocabularyExercisePage/VocabularyExercisePage.tsx'
 
 export default function App() {
 
@@ -105,6 +106,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <ExercisePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/languages/vocabulary/:languageCode/"
+            element={
+              <ProtectedRoute>
+                <VocabularyExercisePage />
               </ProtectedRoute>
             }
           />

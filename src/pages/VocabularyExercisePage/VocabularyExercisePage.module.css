@@ -1,0 +1,413 @@
+/* ---------------------------------- */
+/* Page                               */
+/* ---------------------------------- */
+
+.exercisePage {
+    width: 100%;
+    max-width: 52rem;
+
+    margin: 0 auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+
+/* ---------------------------------- */
+/* Exercise header                    */
+/* ---------------------------------- */
+
+.exerciseHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: var(--space-md);
+}
+
+.exerciseHeader h2,
+.exerciseHeader p {
+    margin: 0;
+}
+
+
+/* ---------------------------------- */
+/* Card                               */
+/* ---------------------------------- */
+
+.exerciseCard {
+    width: 100%;
+
+    background-color: var(--color-surface);
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+
+    overflow: hidden;
+}
+
+
+.cardHeader {
+    padding: var(--space-md) var(--space-lg);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: var(--space-md);
+
+    color: var(--color-text-muted);
+
+    border-bottom: 1px solid var(--color-border);
+}
+
+.cardHeader p {
+    margin: 0;
+}
+
+
+.cardBody {
+    padding: var(--space-xl) var(--space-lg);
+
+    display: flex;
+    flex-direction: column;
+
+    gap: var(--space-lg);
+}
+
+
+/* ---------------------------------- */
+/* Question                           */
+/* ---------------------------------- */
+
+.instruction {
+    margin: 0;
+
+    text-align: center;
+
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+
+.definition {
+    max-width: 38rem;
+
+    margin: 0 auto;
+
+    text-align: center;
+
+    font-size: 1.35rem;
+    line-height: 1.5;
+}
+
+
+.wordType {
+    margin: calc(var(--space-sm) * -1) 0 0;
+
+    text-align: center;
+
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+}
+
+
+/* ---------------------------------- */
+/* Image                              */
+/* ---------------------------------- */
+
+.image {
+    display: block;
+
+    width: auto;
+    max-width: 100%;
+    max-height: 20rem;
+
+    margin: 0 auto;
+
+    object-fit: contain;
+
+    border-radius: var(--border-radius-md);
+}
+
+
+/* ---------------------------------- */
+/* Answer form                        */
+/* ---------------------------------- */
+
+.form {
+    width: 100%;
+    max-width: 38rem;
+
+    margin: 0 auto;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: var(--space-md);
+}
+
+
+.input {
+    width: 100%;
+    min-height: 3rem;
+
+    padding: var(--space-sm) var(--space-md);
+
+    color: var(--color-text);
+    background-color: var(--color-surface);
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+
+    font-size: 1.1rem;
+
+    outline: none;
+}
+
+
+.input:focus {
+    border-color: var(--color-text);
+    box-shadow: 0 0 0 2px var(--color-border);
+}
+
+
+.input:disabled {
+    opacity: 0.7;
+}
+
+
+/* ---------------------------------- */
+/* Buttons                            */
+/* ---------------------------------- */
+
+.primaryButton,
+.secondaryButton,
+.exitButton {
+    min-height: 2.75rem;
+
+    padding: var(--space-sm) var(--space-lg);
+
+    border-radius: var(--border-radius-md);
+
+    font-size: 1rem;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+.primaryButton {
+    align-self: center;
+
+    width: 100%;
+    max-width: 18rem;
+
+    color: var(--color-surface);
+    background-color: var(--color-text);
+
+    border: 1px solid var(--color-text);
+}
+
+
+.primaryButton:hover {
+    opacity: 0.9;
+}
+
+
+.secondaryButton,
+.exitButton {
+    color: var(--color-text);
+    background-color: var(--color-surface);
+
+    border: 1px solid var(--color-border);
+}
+
+
+/* ---------------------------------- */
+/* Feedback                           */
+/* ---------------------------------- */
+
+.feedback {
+    width: 100%;
+    max-width: 38rem;
+
+    margin: 0 auto;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: var(--space-md);
+
+    text-align: center;
+}
+
+
+.successAlert,
+.errorAlert {
+    width: 100%;
+
+    padding: var(--space-md);
+
+    border-radius: var(--border-radius-md);
+
+    font-weight: 600;
+}
+
+
+.successAlert {
+    color: var(--color-exercise-success-text);
+    background-color:
+        var(--color-exercise-success-background);
+
+    border: 1px solid
+        var(--color-exercise-success-border);
+}
+
+
+.errorAlert {
+    color: var(--color-exercise-error-text);
+    background-color:
+        var(--color-exercise-error-background);
+
+    border: 1px solid
+        var(--color-exercise-error-border);
+}
+
+
+.correctAnswer,
+.pronunciation,
+.example {
+    margin: 0;
+}
+
+
+.pronunciation {
+    font-size: 1.15rem;
+}
+
+
+.example {
+    color: var(--color-text-muted);
+
+    font-style: italic;
+    line-height: 1.5;
+}
+
+
+/* ---------------------------------- */
+/* Setup / Finished                   */
+/* ---------------------------------- */
+
+.setupPage,
+.finishedPage {
+    width: 100%;
+    max-width: 42rem;
+
+    margin: 0 auto;
+}
+
+
+.setupCard,
+.finishedCard {
+    padding: var(--space-xl);
+
+    background-color: var(--color-surface);
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+}
+
+
+.setupForm {
+    display: flex;
+    flex-direction: column;
+
+    gap: var(--space-md);
+}
+
+
+.questionCountInput {
+    padding: var(--space-sm) var(--space-md);
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+}
+
+
+.setupActions,
+.finishedActions {
+    margin-top: var(--space-lg);
+
+    display: flex;
+    justify-content: center;
+
+    gap: var(--space-md);
+}
+
+
+/* ---------------------------------- */
+/* Accessibility                     */
+/* ---------------------------------- */
+
+.srOnly {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    padding: 0;
+    margin: -1px;
+
+    overflow: hidden;
+
+    clip: rect(0, 0, 0, 0);
+
+    white-space: nowrap;
+
+    border: 0;
+}
+
+
+/* ---------------------------------- */
+/* Mobile                             */
+/* ---------------------------------- */
+
+@media (max-width: 767px) {
+
+    .exerciseHeader {
+        align-items: flex-start;
+    }
+
+    .cardHeader {
+        padding: var(--space-sm) var(--space-md);
+    }
+
+    .cardBody {
+        padding: var(--space-lg) var(--space-md);
+    }
+
+    .definition {
+        font-size: 1.2rem;
+    }
+
+    .primaryButton {
+        max-width: none;
+    }
+
+    .setupCard,
+    .finishedCard {
+        padding: var(--space-lg) var(--space-md);
+    }
+
+    .setupActions,
+    .finishedActions {
+        flex-direction: column;
+    }
+
+    .image {
+        max-height: 40vh;
+    }
+}
