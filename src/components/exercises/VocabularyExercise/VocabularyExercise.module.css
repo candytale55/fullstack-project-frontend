@@ -217,6 +217,15 @@
 }
 
 
+.cardBody img {
+  display: block;
+  width: 100%;
+  max-width: 20rem;
+  height: auto;
+  margin: 0 auto 1.5rem;
+}
+
+
 .question {
   margin: 0 0 2rem;
   font-size: 1.6rem;
@@ -370,5 +379,9 @@
 
   .question {
     font-size: 1.35rem;
+  }
+
+  .feedback .primaryButton {
+    width: 100%;
   }
 }

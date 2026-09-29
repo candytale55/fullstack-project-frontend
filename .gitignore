@@ -29,3 +29,4 @@ dist-ssr
 # TODO: Quitar cuando mandar a producción
 conc.py
 project_context_front.txt
+.github/
