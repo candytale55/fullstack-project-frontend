@@ -1,4 +1,8 @@
+import type { VocabularyItem } from './vocabulary'
+
 export type ExerciseType =
+    | 'vocabulary'
+    | 'conjugation'
     | 'multiple-choice'
     | 'fill-blank'
     | 'matching'
@@ -17,4 +21,5 @@ export type Exercise = {
     type: ExerciseType
     status: ExerciseStatus
     order: number
+    vocabularyItems?: VocabularyItem[]
 }

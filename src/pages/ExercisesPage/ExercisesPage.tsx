@@ -1,111 +1,132 @@
-/* Lists course or unit exercises and builds links consumed by ExercisePage. */
+/* Lists the real exercises available for a course or one of its units. */
 
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 
-import { coursesMock } from '../../mocks/coursesMock'
-import { unitsMock } from '../../mocks/unitsMock'
-import { exercisesMock } from '../../mocks/exercisesMock'
+import { getCourseById } from '../../services/courseService'
+import {
+    getExercisesByCourse,
+    getExercisesByUnit,
+} from '../../services/exerciseService'
+
+import type { Course, CourseUnit } from '../../types/course'
+import type { Exercise } from '../../types/exercise'
+
+import Alert from '../../components/ui/Alert/Alert'
+import Loader from '../../components/ui/Loader/Loader'
 
 import styles from './ExercisesPage.module.css'
 
 
 export default function ExercisesPage() {
+    const { languageId, courseId, unitId } = useParams()
+    const [course, setCourse] = useState<Course | null>(null)
+    const [unit, setUnit] = useState<CourseUnit | null>(null)
+    const [exercises, setExercises] = useState<Exercise[]>([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState('')
 
-  const {
-    languageId,
-    courseId,
-    unitId,
-  } = useParams()
+    useEffect(() => {
+        const loadExercises = async () => {
+            if (!languageId || !courseId) {
+                setError('Course not found')
+                setLoading(false)
+                return
+            }
 
-  /* Resolve the current course and optional unit before listing exercises. */
-  const course = coursesMock.find(
-    (course) => course.id === courseId &&
-      course.languageId === languageId
-  )
+            try {
+                const courseData = await getCourseById(courseId)
 
-  const unit = unitId
-    ? unitsMock.find(
-      (unit) => unit.id === unitId &&
-        unit.courseId === courseId
-    )
-    : undefined
+                if (courseData.languageId !== languageId) {
+                    setError('Course not found')
+                    return
+                }
 
-  /* Keep direct-course exercises separate from unit exercises. */
-  const exercises = exercisesMock.filter(
-    (exercise) => {
-      if (unitId) { // If unitId is provided, filter by courseId and unitId
-        return (
-          exercise.courseId === courseId &&
-          exercise.unitId === unitId
-        )
-      } // Otherwise, filter exercises by courseId only
-      return (
-        exercise.courseId === courseId &&
-        exercise.unitId === undefined
-      )
-    }).sort((a, b) => a.order - b.order) // Sort by their order within the unit or course
+                const selectedUnit = unitId
+                    ? courseData.units.find(
+                        (courseUnit) => courseUnit.id === unitId
+                    ) ?? null
+                    : null
 
-  if (!course) {
+                if (unitId && !selectedUnit) {
+                    setError('Unit not found')
+                    return
+                }
+
+                const exerciseData = unitId
+                    ? await getExercisesByUnit(courseId, unitId)
+                    : await getExercisesByCourse(courseId)
+
+                setCourse(courseData)
+                setUnit(selectedUnit)
+                setExercises(exerciseData)
+            } catch (error) {
+                setError(
+                    error instanceof Error
+                        ? error.message
+                        : 'Failed to load exercises'
+                )
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        loadExercises()
+    }, [languageId, courseId, unitId])
+
+    if (loading) {
+        return <Loader />
+    }
+
+    if (error) {
+        return <Alert variant="error">{error}</Alert>
+    }
+
+    if (!course || !languageId || !courseId) {
+        return <Alert variant="error">Course not found</Alert>
+    }
+
     return (
-      <div className={styles.exercisesPage}>
-        <h1>Curso no encontrado</h1>
-      </div>
+        <div className={styles.exercisesPage}>
+            <header className={styles.header}>
+                <p>{course.title}</p>
+                {unit && <p>{unit.title}</p>}
+                <h1>Ejercicios</h1>
+                <p>Selecciona un ejercicio para comenzar</p>
+            </header>
+
+            <main className={styles.exerciseList}>
+                {exercises.map((exercise) => {
+                    const exercisePath = unitId
+                        ? `/languages/${languageId}/courses/${courseId}/units/${unitId}/exercises/${exercise.id}`
+                        : `/languages/${languageId}/courses/${courseId}/exercises/${exercise.id}`
+
+                    return (
+                        <article
+                            key={exercise.id}
+                            className={styles.exerciseCard}
+                        >
+                            <div className={styles.exerciseInfo}>
+                                <h2>{exercise.title}</h2>
+                                {exercise.description && (
+                                    <p>{exercise.description}</p>
+                                )}
+                                <p>Tipo: {exercise.type}</p>
+                                <span className={styles.status}>
+                                    {exercise.status}
+                                </span>
+                            </div>
+
+                            <Link
+                                to={exercisePath}
+                                className={styles.exerciseLink}
+                            >
+                                Abrir ejercicio
+                            </Link>
+                        </article>
+                    )
+                })}
+            </main>
+        </div>
     )
-  }
-
-  if (unitId && !unit) {
-    return (
-      <div className={styles.exercisesPage}>
-        <h1>Unidad no encontrada</h1>
-      </div>
-    )
-  }
-
-  return (
-    <div className={styles.exercisesPage}>
-
-      <header className={styles.header}>
-        <p>{course?.title}</p>
-        {unit && <p>{unit?.title}</p>}
-        <h1>Ejercicios</h1>
-        <p>Selecciona un ejercicio para comenzar</p>
-      </header>
-
-      <main className={styles.exercisesPage}>
-        {exercises.map((exercise) => {
-          const exercisePath = unitId
-            ? `/languages/${languageId}/courses/${courseId}/units/${unitId}/exercises/${exercise.id}`
-            : `/languages/${languageId}/courses/${courseId}/exercises/${exercise.id}`
-
-          return (
-            <article
-              key={exercise.id}
-              className={styles.exerciseCard}
-            >
-              <div className={styles.exerciseInfo}>
-                <h2>{exercise.title}</h2>
-
-                {exercise.description && (
-                  <p>{exercise.description}</p>
-                )}
-
-                <p>Tipo: {exercise.type}</p>
-
-                <span className={styles.status}>
-                  {exercise.status}
-                </span>
-              </div>
-
-              <Link
-                to={exercisePath}
-                className={styles.exerciseLink}
-              >
-                Abrir ejercicio
-              </Link>
-            </article>
-          )
-        })}
-      </main>
-    </div>
-  )
 }

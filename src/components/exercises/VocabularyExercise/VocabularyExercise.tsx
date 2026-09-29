@@ -25,12 +25,17 @@ import styles from './VocabularyExercise.module.css'
 type VocabularyExerciseProps = {
     vocabulary: VocabularyItem[]
     onExit: () => void
+    onSessionComplete?: (result: {
+        questionsAnswered: number
+        correctAnswers: number
+    }) => Promise<void>
 }
 
 
 export default function VocabularyExercise({
     vocabulary,
     onExit,
+    onSessionComplete,
 }: VocabularyExerciseProps) {
 
     /* calcula availableVocabulary solo cuando cambia */
@@ -79,6 +84,12 @@ export default function VocabularyExercise({
     const [isFinished, setIsFinished] =
         useState(false)
 
+    const [isSavingProgress, setIsSavingProgress] =
+        useState(false)
+
+    const [progressError, setProgressError] =
+        useState<string | null>(null)
+
     const currentItem =
         sessionVocabulary[currentIndex]
 
@@ -115,6 +126,7 @@ export default function VocabularyExercise({
         setIsChecked(false)
 
         setIsFinished(false)
+        setProgressError(null)
         setHasStarted(true)
     }
 
@@ -153,14 +165,41 @@ export default function VocabularyExercise({
     }
 
 
-    const handleNext = () => {
+    const handleNext = async () => {
 
         const isLastQuestion =
             currentIndex ===
             sessionVocabulary.length - 1
 
         if (isLastQuestion) {
-            setIsFinished(true)
+            if (!onSessionComplete) {
+                setIsFinished(true)
+                return
+            }
+
+            setIsSavingProgress(true)
+            setProgressError(null)
+
+            try {
+                await onSessionComplete({
+                    questionsAnswered: sessionVocabulary.length,
+                    correctAnswers,
+                })
+
+                setIsFinished(true)
+            } catch (error) {
+                console.error(
+                    'Error saving vocabulary progress:',
+                    error
+                )
+
+                setProgressError(
+                    'No se pudo guardar el progreso.'
+                )
+            } finally {
+                setIsSavingProgress(false)
+            }
+
             return
         }
 
@@ -410,16 +449,25 @@ export default function VocabularyExercise({
                             </p>
                         )}
 
+                        {progressError && (
+                            <p role="alert">
+                                {progressError}
+                            </p>
+                        )}
+
                         <button
                             ref={actionButtonRef}
                             type="button"
                             className={styles.primaryButton}
                             onClick={handleNext}
+                            disabled={isSavingProgress}
                         >
-                            {currentIndex ===
-                                sessionVocabulary.length - 1
-                                ? 'Finalizar'
-                                : 'Siguiente'}
+                            {isSavingProgress
+                                ? 'Guardando...'
+                                : currentIndex ===
+                                    sessionVocabulary.length - 1
+                                    ? 'Finalizar'
+                                    : 'Siguiente'}
                         </button>
 
                     </div>
