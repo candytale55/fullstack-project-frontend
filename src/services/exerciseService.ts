@@ -1,5 +1,6 @@
 /* Loads exercises and their selected practice data from the backend. */
 
+import type { Course } from '../types/course'
 import type { Exercise, ExerciseType } from '../types/exercise'
 import type { VocabularyItem } from '../types/vocabulary'
 
@@ -68,6 +69,23 @@ export const getExercisesByUnit = (
     getExercises(
         `/api/v1/exercises/course/${courseId}/unit/${unitId}`
     )
+
+// Loads all exercises that belong directly to a course or to its units.
+export const getExercisesForCourse = async (
+    course: Course
+): Promise<Exercise[]> => {
+    if (course.structure === 'exercises') {
+        return getExercisesByCourse(course.id)
+    }
+
+    const exercisesByUnit = await Promise.all(
+        course.units.map((unit) =>
+            getExercisesByUnit(course.id, unit.id)
+        )
+    )
+
+    return exercisesByUnit.flat()
+}
 
 export const getExerciseById = async (
     exerciseId: string

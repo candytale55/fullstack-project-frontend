@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 
 import { getCoursesByLanguage } from '../../services/courseService'
+import { getExercisesForCourse } from '../../services/exerciseService'
 import type { Course } from '../../types/course'
 
 import Alert from '../../components/ui/Alert/Alert'
@@ -37,7 +38,23 @@ export default function CoursesPage() {
                 const data =
                     await getCoursesByLanguage(languageId)
 
-                setCourses(data)
+                const coursesWithExercises = await Promise.all(
+                    data.map(async (course) => {
+                        const exercises =
+                            await getExercisesForCourse(course)
+
+                        return exercises.length > 0
+                            ? course
+                            : null
+                    })
+                )
+
+                // Keep empty courses in the database, but hide them until content exists.
+                setCourses(
+                    coursesWithExercises.filter(
+                        (course): course is Course => course !== null
+                    )
+                )
             } catch (error) {
                 setError(
                     error instanceof Error
@@ -76,8 +93,8 @@ export default function CoursesPage() {
                     <article
                         key={course.id}
                         className={`${styles.courseCard} ${course.code === 'pt-conjugation'
-                                ? styles.courseCardAvailable
-                                : ''
+                            ? styles.courseCardAvailable
+                            : ''
                             }`}
                     >
                         <div className={styles.courseInfo}>

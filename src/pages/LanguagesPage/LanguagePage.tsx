@@ -9,6 +9,8 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 
 import { getLanguages } from '../../services/languageService'
+import { getCoursesByLanguage } from '../../services/courseService'
+import { getExercisesForCourse } from '../../services/exerciseService'
 import type { Language } from '../../types/language'
 
 import Alert from '../../components/ui/Alert/Alert'
@@ -28,7 +30,28 @@ export default function LanguagesPage() {
     const loadLanguages = async () => {
       try {
         const data = await getLanguages()
-        setLanguages(data)
+
+        const languagesWithExercises = await Promise.all(
+          data.map(async (language) => {
+            const courses = await getCoursesByLanguage(language.id)
+            const courseExercises = await Promise.all(
+              courses.map(getExercisesForCourse)
+            )
+
+            return courseExercises.some(
+              (exercises) => exercises.length > 0
+            )
+              ? language
+              : null
+          })
+        )
+
+        // Keep empty languages in the database, but hide them until content exists.
+        setLanguages(
+          languagesWithExercises.filter(
+            (language): language is Language => language !== null
+          )
+        )
       } catch (error) {
         setError(
           error instanceof Error

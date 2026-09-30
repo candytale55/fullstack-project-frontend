@@ -4,7 +4,9 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 
 import { getCourseById } from '../../services/courseService'
+import { getExercisesByUnit } from '../../services/exerciseService'
 import type { Course, CourseUnit } from '../../types/course'
+import type { Exercise } from '../../types/exercise'
 
 import Alert from '../../components/ui/Alert/Alert'
 import Loader from '../../components/ui/Loader/Loader'
@@ -15,6 +17,8 @@ export default function UnitsPage() {
     const { languageId, courseId } = useParams()
     const [course, setCourse] = useState<Course | null>(null)
     const [units, setUnits] = useState<CourseUnit[]>([])
+    const [unitExercises, setUnitExercises] =
+        useState<Record<string, Exercise[]>>({})
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
 
@@ -34,12 +38,35 @@ export default function UnitsPage() {
                     return
                 }
 
+                const sortedUnits = [...courseData.units].sort(
+                    (firstUnit, secondUnit) =>
+                        firstUnit.order - secondUnit.order
+                )
+
+                const exerciseEntries = await Promise.all(
+                    sortedUnits.map(async (unit) => [
+                        unit.id,
+                        await getExercisesByUnit(
+                            courseId,
+                            unit.id
+                        ),
+                    ] as const)
+                )
+
+                const exercisesByUnit =
+                    Object.fromEntries(exerciseEntries)
+
                 setCourse(courseData)
+                // Keep empty units in the course, but hide them until exercises exist.
                 setUnits(
-                    [...courseData.units].sort(
-                        (firstUnit, secondUnit) =>
-                            firstUnit.order - secondUnit.order
+                    sortedUnits.filter(
+                        (unit) =>
+                            (exercisesByUnit[unit.id] ?? [])
+                                .length > 0
                     )
+                )
+                setUnitExercises(
+                    exercisesByUnit
                 )
             } catch (error) {
                 setError(
@@ -76,24 +103,34 @@ export default function UnitsPage() {
             </header>
 
             <div className={styles.unitList}>
-                {units.map((unit) => (
-                    <article
-                        key={unit.id}
-                        className={styles.unitCard}
-                    >
-                        <div className={styles.unitInfo}>
-                            <h2>{unit.title}</h2>
-                            {unit.description && <p>{unit.description}</p>}
-                        </div>
+                {units.map((unit) => {
+                    const exercises = unitExercises[unit.id] ?? []
+                    const onlyExercise = exercises.length === 1
+                    const destination = onlyExercise
+                        ? `/languages/${languageId}/courses/${courseId}/units/${unit.id}/exercises/${exercises[0].id}`
+                        : `/languages/${languageId}/courses/${courseId}/units/${unit.id}/exercises`
 
-                        <Link
-                            to={`/languages/${languageId}/courses/${courseId}/units/${unit.id}/exercises`}
-                            className={styles.exerciseLink}
+                    return (
+                        <article
+                            key={unit.id}
+                            className={styles.unitCard}
                         >
-                            Ver ejercicios
-                        </Link>
-                    </article>
-                ))}
+                            <div className={styles.unitInfo}>
+                                <h2>{unit.title}</h2>
+                                {unit.description && <p>{unit.description}</p>}
+                            </div>
+
+                            <Link
+                                to={destination}
+                                className={styles.exerciseLink}
+                            >
+                                {onlyExercise
+                                    ? 'Comenzar ejercicio'
+                                    : 'Ver ejercicios'}
+                            </Link>
+                        </article>
+                    )
+                })}
             </div>
         </div>
     )
