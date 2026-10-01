@@ -1,4 +1,4 @@
-/* Loads and saves authenticated progress data for the future Dashboard. */
+/* Exchanges progress sessions with the API and supplies DashboardPage data. */
 
 import type { CourseProgress } from '../types/progress.types'
 
@@ -11,6 +11,9 @@ type StudySessionData = {
     unitId?: string
 }
 
+type StudySessionPayload = StudySessionData & {
+    timeZone: string
+}
 
 /* ---------------------------------- */
 /* Save completed study session       */
@@ -42,9 +45,12 @@ export async function saveStudySession(
                 Authorization:
                     `Bearer ${token}`,
             },
-            body: JSON.stringify(
-                sessionData
-            ),
+            body: JSON.stringify({
+                ...sessionData,
+                timeZone: Intl.DateTimeFormat()
+                    .resolvedOptions()
+                    .timeZone,
+            } satisfies StudySessionPayload),
         }
     )
 

@@ -1,4 +1,4 @@
-/* Loads authenticated progress and presents one summary card per course. */
+/* Loads progress and supplies its aggregated study dates to dashboard components. */
 
 import { useNavigate } from 'react-router'
 
@@ -6,6 +6,7 @@ import useAuth from '../../hooks/useAuth'
 import useProgress from '../../hooks/useProgress'
 import CourseProgressCard from '../../components/dashboard/CourseProgressCard/CourseProgressCard'
 import StudyHeatmap from '../../components/dashboard/StudyHeatmap/StudyHeatmap'
+import { buildHeatmapMonths } from '../../components/dashboard/StudyHeatmap/studyHeatmapUtils'
 
 import Alert from '../../components/ui/Alert/Alert'
 import Button from '../../components/ui/Button/Button'
@@ -26,7 +27,7 @@ export default function DashboardPage() {
   // The API returns progress ordered from most to least recently studied.
   const lastCourse = progress[0] ?? null
 
-  // Prepares one sorted, duplicate-free list for a future StudyHeatmap.
+  // Prepares one sorted, duplicate-free list for the StudyHeatmap.
   const studyDays = Array.from(
     new Set(
       progress.flatMap(
@@ -34,6 +35,10 @@ export default function DashboardPage() {
       )
     )
   ).sort()
+  const heatmapMonths = buildHeatmapMonths(studyDays)
+  const heatmapPeriod = heatmapMonths.length === 1
+    ? 'Último mes'
+    : `Últimos ${heatmapMonths.length} meses`
 
   // Uses the most recent progress record because the API sorts by lastStudiedAt.
   const handleContinueStudying = () => {
@@ -95,11 +100,14 @@ export default function DashboardPage() {
               </h2>
 
               <p className={styles.heatmapSubtitle}>
-                Últimos 4 meses
+                {heatmapPeriod}
               </p>
             </div>
 
-            <StudyHeatmap studyDays={studyDays} />
+            <StudyHeatmap
+              studyDays={studyDays}
+              months={heatmapMonths}
+            />
 
             <div className={styles.legend}>
               <span className={styles.legendItem}>

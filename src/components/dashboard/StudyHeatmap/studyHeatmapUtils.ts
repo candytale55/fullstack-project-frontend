@@ -1,4 +1,4 @@
-/* Pure date-range helper for StudyHeatmap, kept separate for clarity and testability. */
+/* Builds local calendar keys and month blocks consumed by StudyHeatmap. */
 
 export type HeatmapDay = {
     key: string
@@ -29,22 +29,71 @@ const formatMonthAbbreviation = (date: Date) =>
     )
 
 
-// Returns the current month plus the two previous ones, oldest first.
-const getVisibleMonths = (): { year: number; month: number }[] => {
-    const today = new Date()
-    /* current month and the three previous months. */
-    return [3, 2, 1, 0].map((offset) => {
-        const date = new Date(
-            today.getFullYear(),
-            today.getMonth() - offset,
+// Gets the local date key in a string with YYYY-MM-DD format.
+const formatLocalDateKey = (date: Date): string =>
+    [
+        date.getFullYear(),
+        String(date.getMonth() + 1).padStart(2, '0'),
+        String(date.getDate()).padStart(2, '0'),
+    ].join('-')
+
+
+// Parses a local date key in the format YYYY-MM-DD into a Date object, or returns null if invalid.
+const parseDateKey = (key: string): Date | null => {
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(key)
+
+    if (!match) {
+        return null
+    }
+
+    const [, year, month, day] = match.map(Number)
+    const date = new Date(year, month - 1, day)
+
+    return date.getFullYear() === year &&
+        date.getMonth() === month - 1 &&
+        date.getDate() === day
+        ? date
+        : null
+}
+
+
+// Returns complete calendar months from the earliest recorded activity to today.
+const getVisibleMonths = (
+    studyDays: readonly string[],
+    today: Date
+): { year: number; month: number }[] => {
+    const currentMonth = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        1
+    )
+    // Find the earliest user's recorded study day, month and year.
+    const earliestStudyDay = studyDays
+        .map(parseDateKey)
+        .filter((date): date is Date => date !== null)
+        .filter((date) => date <= currentMonth)
+        .sort((first, second) => first.getTime() - second.getTime())[0]
+    const firstMonth = earliestStudyDay
+        ? new Date(
+            earliestStudyDay.getFullYear(),
+            earliestStudyDay.getMonth(),
             1
         )
+        : currentMonth
+    const months: { year: number; month: number }[] = []
 
-        return {
+    for (
+        const date = new Date(firstMonth);
+        date <= currentMonth;
+        date.setMonth(date.getMonth() + 1)
+    ) {
+        months.push({
             year: date.getFullYear(),
             month: date.getMonth(),
-        }
-    })
+        })
+    }
+
+    return months
 }
 
 
@@ -72,7 +121,7 @@ const buildMonthDays = (
         )
 
         days.push({
-            key: date.toISOString().slice(0, 10),
+            key: formatLocalDateKey(date),
             weekday: date.getDay(),
             week,
         })
@@ -82,9 +131,12 @@ const buildMonthDays = (
 }
 
 
-// Builds three independent calendar-month blocks; never mixes days across months.
-export const buildHeatmapMonths = (): HeatmapMonth[] => {
-    return getVisibleMonths().map(({ year, month }) => {
+// Builds independent calendar-month blocks without mixing days between them.
+export const buildHeatmapMonths = (
+    studyDays: readonly string[],
+    today = new Date()
+): HeatmapMonth[] => {
+    return getVisibleMonths(studyDays, today).map(({ year, month }) => {
         const days = buildMonthDays(year, month)
 
         const weeks = days.length === 0
