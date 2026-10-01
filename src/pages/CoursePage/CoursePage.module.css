@@ -83,3 +83,8 @@
         align-self: flex-start;
     }
 }
+
+.itemCardAvailable {
+    background-color: var(--color-route-highlight);
+    border-color: var(--color-route-highlight-border);
+}

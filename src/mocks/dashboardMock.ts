@@ -1,7 +1,7 @@
 import type {
     DashboardCourse,
     DashboardStats
-} from '../types/dashboard'
+} from '../types/dashboard.types'
 
 export const activeCourseMock: DashboardCourse = {
     id: 'course-1',

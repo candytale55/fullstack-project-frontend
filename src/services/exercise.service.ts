@@ -1,8 +1,8 @@
 /* Loads exercises and their selected practice data from the backend. */
 
-import type { Course } from '../types/course'
-import type { Exercise, ExerciseType } from '../types/exercise'
-import type { VocabularyItem } from '../types/vocabulary'
+import type { Course } from '../types/course.types'
+import type { Exercise, ExerciseType } from '../types/exercise.types'
+import type { VocabularyItem } from '../types/vocabulary.types'
 
 const API_URL = import.meta.env.VITE_API_URL
 

@@ -3,10 +3,11 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 
-import { getCourseById } from '../../services/courseService'
-import { getExercisesByUnit } from '../../services/exerciseService'
-import type { Course, CourseUnit } from '../../types/course'
-import type { Exercise } from '../../types/exercise'
+import { getCourseById } from '../../services/course.service'
+import { getExercisesByUnit } from '../../services/exercise.service'
+import { getMyProgress } from '../../services/progress.service'
+import type { Course, CourseUnit } from '../../types/course.types'
+import type { Exercise } from '../../types/exercise.types'
 
 import Alert from '../../components/ui/Alert/Alert'
 import Loader from '../../components/ui/Loader/Loader'
@@ -19,6 +20,8 @@ export default function UnitsPage() {
     const [units, setUnits] = useState<CourseUnit[]>([])
     const [unitExercises, setUnitExercises] =
         useState<Record<string, Exercise[]>>({})
+    const [lastStudiedUnitId, setLastStudiedUnitId] =
+        useState<string | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
 
@@ -32,6 +35,18 @@ export default function UnitsPage() {
 
             try {
                 const courseData = await getCourseById(courseId)
+
+                try {
+                    const progress = await getMyProgress()
+                    const courseProgress = progress.find(
+                        (item) => item.course.id === courseId
+                    )
+                    setLastStudiedUnitId(
+                        courseProgress?.lastStudiedUnitId ?? null
+                    )
+                } catch {
+                    setLastStudiedUnitId(null)
+                }
 
                 if (courseData.languageId !== languageId) {
                     setError('Course not found')
@@ -113,7 +128,10 @@ export default function UnitsPage() {
                     return (
                         <article
                             key={unit.id}
-                            className={styles.unitCard}
+                            className={`${styles.unitCard} ${unit.id === lastStudiedUnitId
+                                ? styles.unitCardAvailable
+                                : ''
+                                }`}
                         >
                             <div className={styles.unitInfo}>
                                 <h2>{unit.title}</h2>

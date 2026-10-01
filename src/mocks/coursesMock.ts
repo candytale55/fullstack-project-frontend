@@ -5,7 +5,7 @@
  * to the backend.
  */
 
-import type { Course } from '../types/course'
+import type { Course } from '../types/course.types'
 
 
 export const coursesMock: Course[] = [

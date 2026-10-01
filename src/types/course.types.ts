@@ -1,15 +1,15 @@
 /*
- * src/types/course.ts
+ * src/types/course.types.ts
  *
- * Defines course and embedded unit data used by the frontend.
- * Backend course documents are normalized to these shapes by courseService.
+ * Defines COURSE and embedded UNIT data used by the frontend.
+ * Backend course documents are normalized to these shapes by course.service.
  */
 
 export type CourseStructure =
     | 'units'
     | 'exercises'
 
-
+// Represents a single unit within a course.
 export type CourseUnit = {
     id: string
     code: string
@@ -18,7 +18,7 @@ export type CourseUnit = {
     order: number
 }
 
-
+// Represents a course with its metadata and embedded units.
 export type Course = {
     id: string
     code: string

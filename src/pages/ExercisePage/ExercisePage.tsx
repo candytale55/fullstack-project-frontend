@@ -12,12 +12,12 @@ import {
     getPortugueseVerbConjugationsByCourse,
     getPortugueseVerbConjugationsByUnit,
 } from '../../components/exercises/ConjugationExercise/portugueseVerbConjugationService'
-import { getExerciseById } from '../../services/exerciseService'
-import { getCourseById } from '../../services/courseService'
-import { saveStudySession } from '../../services/progressService'
+import { getExerciseById } from '../../services/exercise.service'
+import { getCourseById } from '../../services/course.service'
+import { saveStudySession } from '../../services/progress.service'
 
-import type { Course } from '../../types/course'
-import type { Exercise } from '../../types/exercise'
+import type { Course } from '../../types/course.types'
+import type { Exercise } from '../../types/exercise.types'
 
 import Alert from '../../components/ui/Alert/Alert'
 import Loader from '../../components/ui/Loader/Loader'
@@ -109,7 +109,13 @@ export default function ExercisePage() {
             throw new Error('Course ID is missing')
         }
 
-        await saveStudySession(courseId, result)
+        await saveStudySession(
+            courseId,
+            {
+                ...result,
+                ...(unitId && { unitId }),
+            }
+        )
     }
 
     const handleExit = () => {

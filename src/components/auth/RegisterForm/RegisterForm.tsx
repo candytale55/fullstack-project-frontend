@@ -1,7 +1,7 @@
 /*
  * components/auth/RegisterForm/RegisterForm.tsx
  *
- * RegisterForm -> useAuth().register() -> AuthProvider -> authService -> backend.
+ * RegisterForm -> useAuth().register() -> AuthProvider -> auth.service -> backend.
  * Registration only creates the account; on success the user is redirected
  * to LoginPage to start an authenticated session separately.
  */

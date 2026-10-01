@@ -1,16 +1,17 @@
 /*
  * src/pages/CoursesPage/CoursesPage.tsx
  *
- * Loads courses for the selected language through courseService.
+ * Loads courses for the selected language through course.service.
  * Each course id is used to navigate to its course content.
  */
 
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 
-import { getCoursesByLanguage } from '../../services/courseService'
-import { getExercisesForCourse } from '../../services/exerciseService'
-import type { Course } from '../../types/course'
+import { getCoursesByLanguage } from '../../services/course.service'
+import { getExercisesForCourse } from '../../services/exercise.service'
+import { getMyProgress } from '../../services/progress.service'
+import type { Course } from '../../types/course.types'
 
 import Alert from '../../components/ui/Alert/Alert'
 import Loader from '../../components/ui/Loader/Loader'
@@ -24,6 +25,7 @@ export default function CoursesPage() {
     const [courses, setCourses] = useState<Course[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
+    const [lastCourseId, setLastCourseId] = useState<string | null>(null)
 
 
     useEffect(() => {
@@ -37,6 +39,13 @@ export default function CoursesPage() {
             try {
                 const data =
                     await getCoursesByLanguage(languageId)
+
+                try {
+                    const progress = await getMyProgress()
+                    setLastCourseId(progress[0]?.course.id ?? null)
+                } catch {
+                    setLastCourseId(null)
+                }
 
                 const coursesWithExercises = await Promise.all(
                     data.map(async (course) => {
@@ -92,7 +101,7 @@ export default function CoursesPage() {
                 {courses.map((course) => (
                     <article
                         key={course.id}
-                        className={`${styles.courseCard} ${course.code === 'pt-conjugation'
+                        className={`${styles.courseCard} ${course.id === lastCourseId
                             ? styles.courseCardAvailable
                             : ''
                             }`}

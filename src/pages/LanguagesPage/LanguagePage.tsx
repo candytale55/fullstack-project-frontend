@@ -1,17 +1,18 @@
 /*
  * src/pages/LanguagesPage/LanguagesPage.tsx
  *
- * Loads languages through languageService and displays them for selection.
+ * Loads languages through language.service and displays them for selection.
  * Each language id is used to navigate to its available courses.
  */
 
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 
-import { getLanguages } from '../../services/languageService'
-import { getCoursesByLanguage } from '../../services/courseService'
-import { getExercisesForCourse } from '../../services/exerciseService'
-import type { Language } from '../../types/language'
+import { getLanguages } from '../../services/language.service'
+import { getCoursesByLanguage } from '../../services/course.service'
+import { getExercisesForCourse } from '../../services/exercise.service'
+import { getMyProgress } from '../../services/progress.service'
+import type { Language } from '../../types/language.types'
 
 import Alert from '../../components/ui/Alert/Alert'
 import Loader from '../../components/ui/Loader/Loader'
@@ -24,12 +25,20 @@ export default function LanguagesPage() {
   const [languages, setLanguages] = useState<Language[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [lastLanguageId, setLastLanguageId] = useState<string | null>(null)
 
 
   useEffect(() => {
     const loadLanguages = async () => {
       try {
         const data = await getLanguages()
+
+        try {
+          const progress = await getMyProgress()
+          setLastLanguageId(progress[0]?.course.language.id ?? null)
+        } catch {
+          setLastLanguageId(null)
+        }
 
         const languagesWithExercises = await Promise.all(
           data.map(async (language) => {
@@ -89,9 +98,9 @@ export default function LanguagesPage() {
         {languages.map((language) => (
           <article
             key={language.id}
-            className={`${styles.languageCard} ${language.code === 'pt'
-                ? styles.languageCardAvailable
-                : ''
+            className={`${styles.languageCard} ${language.id === lastLanguageId
+              ? styles.languageCardAvailable
+              : ''
               }`}
           >
             <div>

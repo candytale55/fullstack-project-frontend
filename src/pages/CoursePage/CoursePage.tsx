@@ -1,20 +1,21 @@
 /*
  * src/pages/CoursePage/CoursePage.tsx
  *
- * Loads the selected course through courseService.
+ * Loads the selected course through course.service.
  * The course structure determines whether navigation continues to units or exercises.
  */
 
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 
-import { getCourseById } from '../../services/courseService'
+import { getCourseById } from '../../services/course.service'
+import { getMyProgress } from '../../services/progress.service'
 import {
   getExercisesByCourse,
   getExercisesByUnit,
-} from '../../services/exerciseService'
-import type { Course } from '../../types/course'
-import type { Exercise } from '../../types/exercise'
+} from '../../services/exercise.service'
+import type { Course } from '../../types/course.types'
+import type { Exercise } from '../../types/exercise.types'
 
 import Alert from '../../components/ui/Alert/Alert'
 import Loader from '../../components/ui/Loader/Loader'
@@ -37,6 +38,9 @@ export default function CoursePage() {
   const [unitExercises, setUnitExercises] =
     useState<Record<string, Exercise[]>>({})
 
+  const [lastStudiedUnitId, setLastStudiedUnitId] =
+    useState<string | null>(null)
+
   const [loading, setLoading] =
     useState(true)
 
@@ -55,6 +59,18 @@ export default function CoursePage() {
       try {
         const data = await getCourseById(courseId)
         setCourse(data)
+
+        try {
+          const progress = await getMyProgress()
+          const courseProgress = progress.find(
+            (item) => item.course.id === courseId
+          )
+          setLastStudiedUnitId(
+            courseProgress?.lastStudiedUnitId ?? null
+          )
+        } catch {
+          setLastStudiedUnitId(null)
+        }
 
         // Courses without embedded units list their exercises here directly.
         if (data.structure === 'exercises') {
@@ -138,7 +154,10 @@ export default function CoursePage() {
               return (
                 <article
                   key={unit.id}
-                  className={styles.itemCard}
+                  className={`${styles.itemCard} ${unit.id === lastStudiedUnitId
+                    ? styles.itemCardAvailable
+                    : ''
+                    }`}
                 >
                   <div>
                     <h3>{unit.title}</h3>

@@ -7,7 +7,7 @@ import {
 
 import type {
     VocabularyItem
-} from '../../../types/vocabulary'
+} from '../../../types/vocabulary.types'
 
 import {
     normalizeVocabularyAnswer,

@@ -3,14 +3,14 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 
-import { getCourseById } from '../../services/courseService'
+import { getCourseById } from '../../services/course.service'
 import {
     getExercisesByCourse,
     getExercisesByUnit,
-} from '../../services/exerciseService'
+} from '../../services/exercise.service'
 
-import type { Course, CourseUnit } from '../../types/course'
-import type { Exercise } from '../../types/exercise'
+import type { Course, CourseUnit } from '../../types/course.types'
+import type { Exercise } from '../../types/exercise.types'
 
 import Alert from '../../components/ui/Alert/Alert'
 import Loader from '../../components/ui/Loader/Loader'

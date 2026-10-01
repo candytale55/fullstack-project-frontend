@@ -1,6 +1,6 @@
-/* src/types/exercise.ts
+/* src/types/exercise.types.ts
  * Defines EXERCISE data used by the frontend.
- * Backend exercise documents are normalized to this shape by courseService.
+ * Backend exercise documents are normalized to this shape by course.service.
  */
 
 import type { VocabularyItem } from './vocabulary.types'

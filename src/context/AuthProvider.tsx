@@ -1,7 +1,7 @@
 /*
  * src/context/AuthProvider.tsx
  *
- * Components/useAuth -> AuthProvider actions -> authService -> backend.
+ * Components/useAuth -> AuthProvider actions -> auth.service -> backend.
  * AuthProvider owns the frontend session, stores the JWT and normalizes
  * backend users before exposing them through AuthContext.
  */
@@ -18,14 +18,14 @@ import {
   getCurrentUser,
   login as loginRequest,
   register as registerRequest,
-} from '../services/authService'
+} from '../services/auth.service'
 
 import type {
   ApiUser,
   AuthUser,
   LoginCredentials,
   RegisterData,
-} from '../types/auth'
+} from '../types/auth.types'
 
 /* ===================================== */
 

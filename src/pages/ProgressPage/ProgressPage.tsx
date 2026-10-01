@@ -55,6 +55,7 @@ export default function ProgressPage() {
                         <CourseProgressCard
                             key={courseProgress.id}
                             progress={courseProgress}
+                            isLatest={courseProgress.id === progress[0].id}
                             onContinue={() =>
                                 handleContinue(
                                     courseProgress.course.id,

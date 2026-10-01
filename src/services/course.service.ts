@@ -1,5 +1,5 @@
 /*
- * src/services/courseService.ts
+ * src/services/course.service.ts
  *
  * Handles communication with backend course endpoints.
  * CoursesPage and CoursePage use this service to load course data,
@@ -13,7 +13,7 @@ import type {
     Course,
     CourseStructure,
     CourseUnit
-} from '../types/course'
+} from '../types/course.types'
 
 const API_URL = import.meta.env.VITE_API_URL
 

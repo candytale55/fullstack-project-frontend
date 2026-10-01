@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react'
 
-import { getMyProgress } from '../services/progressService'
-import type { CourseProgress } from '../types/progress'
+import { getMyProgress } from '../services/progress.service'
+import type { CourseProgress } from '../types/progress.types'
 
 
 export default function useProgress() {

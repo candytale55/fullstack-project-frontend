@@ -16,7 +16,7 @@ import {
 
 import type {
     VocabularyItem,
-} from '../../types/vocabulary'
+} from '../../types/vocabulary.types'
 
 import Loader from '../../components/ui/Loader/Loader'
 import Alert from '../../components/ui/Alert/Alert'

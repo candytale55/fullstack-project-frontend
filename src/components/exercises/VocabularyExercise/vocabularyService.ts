@@ -1,6 +1,6 @@
 import type {
     VocabularyItem
-} from '../../../types/vocabulary'
+} from '../../../types/vocabulary.types'
 
 
 const API_URL = import.meta.env.VITE_API_URL

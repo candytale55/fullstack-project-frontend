@@ -1,7 +1,7 @@
 /*
  * components/auth/LoginForm/LoginForm.tsx
  *
- * LoginForm -> useAuth().login() -> AuthProvider -> authService -> backend.
+ * LoginForm -> useAuth().login() -> AuthProvider -> auth.service -> backend.
  * A successful login stores the session through AuthProvider and then
  * redirects the authenticated user to the application content.
  */

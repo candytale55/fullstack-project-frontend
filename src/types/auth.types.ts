@@ -1,8 +1,8 @@
 /*
- * src/types/auth.ts
+ * src/types/auth.types.ts
  *
  * Shared authentication contracts.
- * Forms/AuthProvider use request types -> authService sends them to the backend
+ * Forms/AuthProvider use request types -> auth.service sends them to the backend
  * -> backend response types are normalized by AuthProvider for the UI.
  */
 
