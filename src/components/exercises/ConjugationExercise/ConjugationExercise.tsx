@@ -1,4 +1,4 @@
-/* Runs the conjugation session using questions generated from API records. */
+/* Renders questions from API conjugations, including their preserved Anki tags. */
 
 import {
   useCallback,
