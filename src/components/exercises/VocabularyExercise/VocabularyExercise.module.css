@@ -138,9 +138,13 @@
   font-weight: 400;
 }
 
+.partOfSpeech {
+  margin: 0;
+  font-weight: 700;
+}
 
 .unitName {
-  margin-top: 0.35rem !important;
+  margin-top: 0.35rem;
 
   font-size: 1.4rem;
   font-weight: 700;
@@ -198,12 +202,9 @@
 }
 
 
-.tense {
-  margin: 0;
 
-  font-weight: 700;
-  text-transform: capitalize;
-}
+
+
 
 
 /* Main question area */
@@ -307,30 +308,6 @@
   margin: 0;
 
   font-size: 1.15rem;
-}
-
-
-/* ---------------------------------- */
-/* Accessibility                     */
-/* ---------------------------------- */
-
-/*
- * Visible to screen readers but not visually.
- */
-.srOnly {
-  position: absolute;
-
-  width: 1px;
-  height: 1px;
-
-  padding: 0;
-  margin: -1px;
-
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-
-  white-space: nowrap;
-  border: 0;
 }
 
 

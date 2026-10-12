@@ -353,12 +353,6 @@ export default function VocabularyExercise({
                         {' / '}
                         {sessionVocabulary.length}
                     </span>
-
-                    {currentItem.partOfSpeech && (
-                        <span className={styles.tense}>
-                            {currentItem.partOfSpeech}
-                        </span>
-                    )}
                 </header>
 
 
@@ -372,12 +366,19 @@ export default function VocabularyExercise({
                             : 'en inglés'}
                     </p>
 
+                    {currentItem.partOfSpeech && (
+                        <span className={styles.partOfSpeech}>
+                            {currentItem.partOfSpeech}
+                        </span>
+                    )}
+
                     {currentItem.image?.url && (
                         <img
                             src={currentItem.image.url}
                             alt=""
                         />
                     )}
+                    
 
                     <p className={styles.question}>
                         {currentItem.definition}
@@ -392,7 +393,7 @@ export default function VocabularyExercise({
 
                     <label
                         htmlFor="vocabularyAnswer"
-                        className={styles.srOnly}
+                        className="sr-only"
                     >
                         Escribe la respuesta
                     </label>

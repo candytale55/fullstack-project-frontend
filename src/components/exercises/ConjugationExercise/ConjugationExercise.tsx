@@ -499,7 +499,7 @@ export default function ConjugationExercise({
 
             <label
               htmlFor="conjugationAnswer"
-              className={styles.srOnly}
+              className="sr-only"
             >
               Escribe la conjugación
             </label>

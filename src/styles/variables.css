@@ -8,6 +8,8 @@
   --color-route-highlight: #d6ecea;
   --color-route-highlight-border: #5f9f9a;
   --color-user-name: #155724;
+  --color-alert-success-background: #edf7ed;
+  --color-alert-error-background: #fdecec;
 
   /* Exercise UI */
   --color-exercise-surface: #ffffff;
