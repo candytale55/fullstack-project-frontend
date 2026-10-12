@@ -366,12 +366,6 @@ export default function VocabularyExercise({
                             : 'en inglés'}
                     </p>
 
-                    {currentItem.partOfSpeech && (
-                        <span className={styles.partOfSpeech}>
-                            {currentItem.partOfSpeech}
-                        </span>
-                    )}
-
                     {currentItem.image?.url && (
                         <img
                             src={currentItem.image.url}
@@ -437,7 +431,11 @@ export default function VocabularyExercise({
                                 <strong>{currentItem.term}</strong>
                             </p>
                         )}
-
+                        {currentItem.partOfSpeech && (
+                            <span className={styles.partOfSpeech}>
+                                {currentItem.partOfSpeech}
+                            </span>
+                        )}
                         {currentItem.pronunciation && (
                             <p className={styles.pronunciation}>
                                 /{currentItem.pronunciation}/
@@ -445,7 +443,7 @@ export default function VocabularyExercise({
                         )}
 
                         {currentItem.example && (
-                            <p>
+                            <p className={styles.example}>
                                 {currentItem.example}
                             </p>
                         )}
