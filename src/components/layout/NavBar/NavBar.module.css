@@ -43,7 +43,8 @@
 }
 
 .user {
-  color: var(--color-text-muted);
+  color: var(--color-user-name);
+  font-weight: 600;
 }
 
 @media (min-width: 768px) {
