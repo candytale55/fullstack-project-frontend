@@ -1,12 +1,14 @@
 /* Converts API conjugation records into person-level questions for the exercise component. */
 
+
+/* --------------- Types  --------------- */
+
 import type {
   PortugueseVerbConjugation,
   PortugueseVerbForms,
-} from './ConjugationExercise'
+} from '../../../types/conjugation.types'
 
 
-/* --------------- Types  --------------- */
 
 export type PersonKey =
   Extract<keyof PortugueseVerbForms, string>
@@ -55,6 +57,7 @@ const persons: {
     },
   ]
 
+  /* //TODO: key elesElasVoces and eleElaVoce - aleatoriamente usar ele ela voce a senhora, etc. */
 
 /* ----------- Create Questions  ---------- */
 
