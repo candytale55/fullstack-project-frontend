@@ -3,9 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 
-import ConjugationExercise, {
-    type PortugueseVerbConjugation,
-} from '../../components/exercises/ConjugationExercise/ConjugationExercise'
+import ConjugationExercise from '../../components/exercises/ConjugationExercise/ConjugationExercise'
 import VocabularyExercise from '../../components/exercises/VocabularyExercise/VocabularyExercise'
 
 import {
@@ -17,6 +15,7 @@ import { getCourseById } from '../../services/course.service'
 import { saveStudySession } from '../../services/progress.service'
 
 import type { Course } from '../../types/course.types'
+import type { PortugueseVerbConjugation } from '../../types/conjugation.types'
 import type { Exercise } from '../../types/exercise.types'
 
 import Alert from '../../components/ui/Alert/Alert'

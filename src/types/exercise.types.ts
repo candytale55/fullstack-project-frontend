@@ -67,7 +67,9 @@ export type ExerciseCriteria =
 // Unified Exercise Document (as stored in MongoDB)    
 export interface Exercise {
     id: string
-    code: string // i.e 'pt-conj-pres-irregulars' 
+    // The current API does not return a code for all exercise records. It becomes
+    // available when the declarative exercise architecture is introduced.
+    code?: string // e.g. 'pt-conj-pres-irregulars'
     courseId: string    // target course
     unitId?: string     // target unit in course
     title: string       // "Practice Vocabulary: Fruits"
