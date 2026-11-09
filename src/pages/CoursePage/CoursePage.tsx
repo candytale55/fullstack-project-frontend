@@ -25,13 +25,20 @@ export default function CoursePage() {
 
   const loadCourse = useCallback(
     async () => {
-      if (!courseId) {
+      if (!languageId || !courseId) {
         throw new Error('Course not found')
       }
 
-      return getCourseById(courseId)
+      const course =
+        await getCourseById(courseId)
+
+      if (course.languageId !== languageId) {
+        throw new Error('Course not found')
+      }
+
+      return course
     },
-    [courseId]
+    [courseId, languageId]
   )
 
   const {
