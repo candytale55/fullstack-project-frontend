@@ -1,6 +1,6 @@
 /* Loads unit data through the conjugation service and passes it to the exercise component. */
 
-import { useEffect, useState } from 'react'
+import { useCallback } from 'react'
 
 import {
   useNavigate,
@@ -19,6 +19,8 @@ import {
   saveStudySession
 } from '../../services/progressService'
 
+import useFetch from '../../hooks/useFetch'
+
 export default function ExercisePage() {
 
   const {
@@ -31,58 +33,40 @@ export default function ExercisePage() {
   const navigate = useNavigate()
 
 
-  const [conjugations, setConjugations] =
-    useState<PortugueseVerbConjugation[]>([])
-
-  const [isLoading, setIsLoading] =
-    useState(true)
-
-  const [error, setError] =
-    useState<string | null>(null)
-
-
-  /* --------------- Load data --------------- */
-
-  // Avoids an API request when the route has no unit identifier.
-  useEffect(() => {
-
-    if (!unitId) {
-      return
-    }
-
-
-    const loadConjugations = async () => {
+  const loadConjugations = useCallback(
+    async () => {
+      if (!unitId) {
+        throw new Error('Unidad no encontrada')
+      }
 
       try {
-
-        const data =
-          await getPortugueseVerbConjugationsByUnit(
-            unitId
-          )
-
-        setConjugations(data)
-
+        return await getPortugueseVerbConjugationsByUnit(
+          unitId
+        )
       } catch (error) {
-
         console.error(
           'Error loading conjugations:',
           error
         )
 
-        setError(
+        throw new Error(
           'No se pudieron cargar los ejercicios'
         )
-
-      } finally {
-
-        setIsLoading(false)
       }
+    },
+    [unitId]
+  )
+
+  const {
+    data: conjugations,
+    loading: isLoading,
+    error,
+  } = useFetch(
+    loadConjugations,
+    {
+      initialData: [] as PortugueseVerbConjugation[],
     }
-
-
-    loadConjugations()
-
-  }, [unitId])
+  )
 
 
 

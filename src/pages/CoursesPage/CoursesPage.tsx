@@ -5,11 +5,11 @@
  * Each course id is used to navigate to its course content.
  */
 
-import { useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import { Link, useParams } from 'react-router'
 
 import { getCoursesByLanguage } from '../../services/courseService'
-import type { Course } from '../../types/course'
+import useFetch from '../../hooks/useFetch'
 
 import Alert from '../../components/ui/Alert/Alert'
 import Loader from '../../components/ui/Loader/Loader'
@@ -20,37 +20,28 @@ import styles from './CoursesPage.module.css'
 export default function CoursesPage() {
     const { languageId } = useParams()
 
-    const [courses, setCourses] = useState<Course[]>([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState('')
-
-
-    useEffect(() => {
-        const loadCourses = async () => {
+    const loadCourses = useCallback(
+        async () => {
             if (!languageId) {
-                setError('Language not found')
-                setLoading(false)
-                return
+                throw new Error('Language not found')
             }
 
-            try {
-                const data =
-                    await getCoursesByLanguage(languageId)
+            return getCoursesByLanguage(languageId)
+        },
+        [languageId]
+    )
 
-                setCourses(data)
-            } catch (error) {
-                setError(
-                    error instanceof Error
-                        ? error.message
-                        : 'Failed to load courses'
-                )
-            } finally {
-                setLoading(false)
-            }
+    const {
+        data: courses,
+        loading,
+        error,
+    } = useFetch(
+        loadCourses,
+        {
+            initialData: [],
+            errorMessage: 'Failed to load courses',
         }
-
-        loadCourses()
-    }, [languageId])
+    )
 
 
     if (loading) {

@@ -5,11 +5,10 @@
  * Each language id is used to navigate to its available courses.
  */
 
-import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 
 import { getLanguages } from '../../services/languageService'
-import type { Language } from '../../types/language'
+import useFetch from '../../hooks/useFetch'
 
 import Alert from '../../components/ui/Alert/Alert'
 import Loader from '../../components/ui/Loader/Loader'
@@ -19,29 +18,17 @@ import styles from './LanguagesPage.module.css'
 
 export default function LanguagesPage() {
 
-  const [languages, setLanguages] = useState<Language[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-
-
-  useEffect(() => {
-    const loadLanguages = async () => {
-      try {
-        const data = await getLanguages()
-        setLanguages(data)
-      } catch (error) {
-        setError(
-          error instanceof Error
-            ? error.message
-            : 'Failed to load languages'
-        )
-      } finally {
-        setLoading(false)
-      }
+  const {
+    data: languages,
+    loading,
+    error,
+  } = useFetch(
+    getLanguages,
+    {
+      initialData: [],
+      errorMessage: 'Failed to load languages',
     }
-
-    loadLanguages()
-  }, [])
+  )
 
 
   if (loading) {

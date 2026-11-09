@@ -5,17 +5,14 @@
  * Units are retrieved from the backend using the course id.
  */
 
-import { useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import { Link, useParams } from 'react-router'
 
 import {
   getCourseById,
 } from '../../services/courseService'
 
-import type {
-  Course,
-  CourseUnit,
-} from '../../types/course'
+import useFetch from '../../hooks/useFetch'
 
 import Alert from '../../components/ui/Alert/Alert'
 import Loader from '../../components/ui/Loader/Loader'
@@ -28,58 +25,42 @@ export default function UnitsPage() {
     courseId,
   } = useParams()
 
-  const [course, setCourse] =
-    useState<Course | null>(null)
-
-  const [units, setUnits] =
-    useState<CourseUnit[]>([])
-
-  const [loading, setLoading] =
-    useState(true)
-
-  const [error, setError] =
-    useState('')
-
-
-  useEffect(() => {
-    const loadUnits = async () => {
+  const loadCourse = useCallback(
+    async () => {
       if (!languageId || !courseId) {
-        setError('Course not found')
-        setLoading(false)
-        return
+        throw new Error('Course not found')
       }
 
-      try {
-        const courseData =
-          await getCourseById(courseId)
+      const courseData =
+        await getCourseById(courseId)
 
-        if (courseData.languageId !== languageId) {
-          setError('Course not found')
-          return
-        }
-
-        setCourse(courseData)
-        setUnits(
-          [...courseData.units].sort(
-            (firstUnit, secondUnit) =>
-              firstUnit.order - secondUnit.order
-          )
-        )
-
-      } catch (error) {
-        setError(
-          error instanceof Error
-            ? error.message
-            : 'Failed to load units'
-        )
-
-      } finally {
-        setLoading(false)
+      if (courseData.languageId !== languageId) {
+        throw new Error('Course not found')
       }
+
+      return courseData
+    },
+    [courseId, languageId]
+  )
+
+  const {
+    data: course,
+    loading,
+    error,
+  } = useFetch(
+    loadCourse,
+    {
+      initialData: null,
+      errorMessage: 'Failed to load units',
     }
+  )
 
-    loadUnits()
-  }, [languageId, courseId])
+  const units = course
+    ? [...course.units].sort(
+      (firstUnit, secondUnit) =>
+        firstUnit.order - secondUnit.order
+    )
+    : []
 
 
   if (loading) {

@@ -5,11 +5,11 @@
  * The course structure determines whether navigation continues to units or exercises.
  */
 
-import { useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import { Link, useParams } from 'react-router'
 
 import { getCourseById } from '../../services/courseService'
-import type { Course } from '../../types/course'
+import useFetch from '../../hooks/useFetch'
 
 import Alert from '../../components/ui/Alert/Alert'
 import Loader from '../../components/ui/Loader/Loader'
@@ -23,40 +23,28 @@ export default function CoursePage() {
     courseId,
   } = useParams()
 
-  const [course, setCourse] =
-    useState<Course | null>(null)
-
-  const [loading, setLoading] =
-    useState(true)
-
-  const [error, setError] =
-    useState('')
-
-
-  useEffect(() => {
-    const loadCourse = async () => {
+  const loadCourse = useCallback(
+    async () => {
       if (!courseId) {
-        setError('Course not found')
-        setLoading(false)
-        return
+        throw new Error('Course not found')
       }
 
-      try {
-        const data = await getCourseById(courseId)
-        setCourse(data)
-      } catch (error) {
-        setError(
-          error instanceof Error
-            ? error.message
-            : 'Failed to load course'
-        )
-      } finally {
-        setLoading(false)
-      }
+      return getCourseById(courseId)
+    },
+    [courseId]
+  )
+
+  const {
+    data: course,
+    loading,
+    error,
+  } = useFetch(
+    loadCourse,
+    {
+      initialData: null,
+      errorMessage: 'Failed to load course',
     }
-
-    loadCourse()
-  }, [courseId])
+  )
 
 
   if (loading) {
