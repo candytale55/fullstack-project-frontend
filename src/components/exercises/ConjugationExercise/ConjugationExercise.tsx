@@ -1,4 +1,4 @@
-/* Runs the conjugation session using questions generated from API records. */
+/* Renders questions from API conjugations, including their preserved Anki tags. */
 
 import {
   useCallback,
@@ -499,7 +499,7 @@ export default function ConjugationExercise({
 
             <label
               htmlFor="conjugationAnswer"
-              className={styles.srOnly}
+              className="sr-only"
             >
               Escribe la conjugación
             </label>

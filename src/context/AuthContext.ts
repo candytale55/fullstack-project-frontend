@@ -12,7 +12,7 @@ import type {
     AuthUser,
     LoginCredentials,
     RegisterData,
-} from '../types/auth'
+} from '../types/auth.types'
 
 
 type AuthContextType = {

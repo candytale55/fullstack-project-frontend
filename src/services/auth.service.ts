@@ -1,7 +1,7 @@
 /*
- * src/services/authService.ts
+ * src/services/auth.service.ts
  *
- * AuthProvider -> authService -> backend authentication endpoints.
+ * AuthProvider -> auth.service -> backend authentication endpoints.
  * This module only handles HTTP requests; session state and token storage
  * remain the responsibility of AuthProvider.
  */
@@ -12,7 +12,7 @@ import type {
   LoginCredentials,
   RegisterData,
   RegisterResponse,
-} from '../types/auth'
+} from '../types/auth.types'
 
 
 const API_URL = import.meta.env.VITE_API_URL

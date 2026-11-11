@@ -77,8 +77,46 @@ export default function useFetch<T>(
     }, [errorMessage, fetcher])
 
     useEffect(() => {
-        void refetch()
-    }, [refetch])
+        const currentRequestId =
+            ++requestId.current
+
+        const load = async () => {
+            try {
+                const result = await fetcher()
+
+                if (
+                    isMounted.current &&
+                    currentRequestId === requestId.current
+                ) {
+                    setData(result)
+                }
+            } catch (error) {
+                if (
+                    isMounted.current &&
+                    currentRequestId === requestId.current
+                ) {
+                    setError(
+                        error instanceof Error
+                            ? error.message
+                            : errorMessage
+                    )
+                }
+            } finally {
+                if (
+                    isMounted.current &&
+                    currentRequestId === requestId.current
+                ) {
+                    setLoading(false)
+                }
+            }
+        }
+
+        void load()
+
+        return () => {
+            requestId.current += 1
+        }
+    }, [errorMessage, fetcher])
 
     return {
         data,

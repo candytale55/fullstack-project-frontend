@@ -122,3 +122,8 @@
         min-height: 2.75rem;
     }
 }
+
+.latest {
+    background-color: var(--color-route-highlight);
+    border-color: var(--color-route-highlight-border);
+}

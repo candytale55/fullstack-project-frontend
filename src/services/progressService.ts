@@ -1,6 +1,6 @@
 /* Loads and saves authenticated progress data for the future Dashboard. */
 
-import type { CourseProgress } from '../types/progress'
+import type { CourseProgress } from '../types/progress.types'
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -8,6 +8,7 @@ const API_URL = import.meta.env.VITE_API_URL
 type StudySessionData = {
     questionsAnswered: number
     correctAnswers: number
+    unitId?: string
 }
 
 
@@ -60,6 +61,8 @@ export async function saveStudySession(
     return data
 }
 
+
+
 type ApiCourseProgress = Omit<CourseProgress, 'id' | 'course'> & {
     _id: string
     course: {
@@ -86,6 +89,7 @@ const mapCourseProgress = (
     questionsAnswered: progress.questionsAnswered,
     correctAnswers: progress.correctAnswers,
     lastStudiedAt: progress.lastStudiedAt,
+    lastStudiedUnitId: progress.lastStudiedUnitId,
     studyDays: progress.studyDays,
     course: {
         id: progress.course._id,
@@ -107,6 +111,8 @@ const mapCourseProgress = (
 /* ---------------------------------- */
 
 export async function getMyProgress(): Promise<CourseProgress[]> {
+    
+    // Get the authentication token from local storage
     const token =
         localStorage.getItem('authToken')
 
@@ -116,6 +122,7 @@ export async function getMyProgress(): Promise<CourseProgress[]> {
         )
     }
 
+    // Fetch the user's progress from the API
     const response = await fetch(
         `${API_URL}/api/v1/progress/me`,
         {

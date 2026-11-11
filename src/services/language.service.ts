@@ -1,11 +1,11 @@
 /*
- * src/services/languageService.ts
+ * src/services/language.service.ts
  *
- * LanguagesPage -> languageService -> backend language endpoints.
+ * LanguagesPage -> language.service -> backend language endpoints.
  * Backend documents are normalized before reaching the UI.
  */
 
-import type { Language } from '../types/language'
+import type { Language } from '../types/language.types'
 
 const API_URL = import.meta.env.VITE_API_URL
 

@@ -11,9 +11,9 @@
 }
 
 .success {
-  background-color: #edf7ed;
+  background-color: var(--color-alert-success-background);
 }
 
 .error {
-  background-color: #fdecec;
+  background-color: var(--color-alert-error-background);
 }

@@ -1,4 +1,13 @@
+/* src/types/exercise.ts
+ * Defines EXERCISE data used by the frontend.
+ * Backend exercise documents are normalized to this shape by courseService.
+ */
+
+import type { VocabularyItem } from './vocabulary.types'
+
 export type ExerciseType =
+    | 'vocabulary'
+    | 'conjugation'
     | 'multiple-choice'
     | 'fill-blank'
     | 'matching'
@@ -17,4 +26,5 @@ export type Exercise = {
     type: ExerciseType
     status: ExerciseStatus
     order: number
+    vocabularyItems?: VocabularyItem[]
 }
