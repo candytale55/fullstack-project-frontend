@@ -58,6 +58,12 @@ export default function CoursePage() {
 
       try {
         const data = await getCourseById(courseId)
+
+        if (data.languageId !== languageId) {
+          setError('Course not found')
+          return
+        }
+
         setCourse(data)
 
         try {
@@ -101,7 +107,7 @@ export default function CoursePage() {
     }
 
     loadCourse()
-  }, [courseId])
+  }, [courseId, languageId])
 
 
   if (loading) {
