@@ -10,6 +10,7 @@ import { Link, useParams } from 'react-router'
 
 import {
   getCourseById,
+  getCourseUnits,
 } from '../../services/courseService'
 
 import useFetch from '../../hooks/useFetch'
@@ -31,20 +32,26 @@ export default function UnitsPage() {
         throw new Error('Course not found')
       }
 
-      const courseData =
-        await getCourseById(courseId)
+      const [courseData, units] =
+        await Promise.all([
+          getCourseById(courseId),
+          getCourseUnits(courseId),
+        ])
 
       if (courseData.languageId !== languageId) {
         throw new Error('Course not found')
       }
 
-      return courseData
+      return {
+        course: courseData,
+        units,
+      }
     },
     [courseId, languageId]
   )
 
   const {
-    data: course,
+    data,
     loading,
     error,
   } = useFetch(
@@ -55,12 +62,8 @@ export default function UnitsPage() {
     }
   )
 
-  const units = course
-    ? [...course.units].sort(
-      (firstUnit, secondUnit) =>
-        firstUnit.order - secondUnit.order
-    )
-    : []
+  const course = data?.course ?? null
+  const units = data?.units ?? []
 
 
   if (loading) {
@@ -85,13 +88,6 @@ export default function UnitsPage() {
     )
   }
 
-  const availableExerciseUnits = new Set([
-    'present',
-    'imperfect',
-    'imperative',
-  ])
-
-
   return (
     <div className={styles.unitsPage}>
       <header className={styles.header}>
@@ -106,21 +102,13 @@ export default function UnitsPage() {
 
       <div className={styles.unitList}>
         {units.map((unit) => {
-          const hasExercises =
-            course.code === 'pt-conjugation' &&
-            availableExerciseUnits.has(unit.code)
-
-          const unitPath = hasExercises
-            ? `/languages/${languageId}/courses/${courseId}/units/${unit.id}/exercise`
-            : `/languages/${languageId}/courses/${courseId}/units/${unit.id}/exercises`
+          const unitPath =
+            `/languages/${languageId}/courses/${courseId}/units/${unit.id}/exercises`
 
           return (
             <article
               key={unit.id}
-              className={`${styles.unitCard} ${hasExercises
-                ? styles.unitCardAvailable
-                : ''
-                }`}
+              className={`${styles.unitCard} ${styles.unitCardAvailable}`}
             >
               <div className={styles.unitInfo}>
                 <h2>{unit.title}</h2>

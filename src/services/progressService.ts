@@ -8,6 +8,7 @@ const API_URL = import.meta.env.VITE_API_URL
 type StudySessionData = {
     questionsAnswered: number
     correctAnswers: number
+    unitId?: string
 }
 
 
@@ -30,6 +31,17 @@ export async function saveStudySession(
         )
     }
 
+    const timeZone =
+        Intl.DateTimeFormat()
+            .resolvedOptions()
+            .timeZone
+
+    if (!timeZone) {
+        throw new Error(
+            'Unable to determine the local time zone'
+        )
+    }
+
     // Send PATCH request to save study session
     const response = await fetch(
         `${API_URL}/api/v1/progress/me/course/${courseId}/session`,
@@ -42,7 +54,10 @@ export async function saveStudySession(
                     `Bearer ${token}`,
             },
             body: JSON.stringify(
-                sessionData
+                {
+                    ...sessionData,
+                    timeZone,
+                }
             ),
         }
     )

@@ -89,7 +89,10 @@ export default function ExercisePage() {
 
     await saveStudySession(
       courseId,
-      result
+      {
+        ...result,
+        unitId,
+      }
     )
   }
 

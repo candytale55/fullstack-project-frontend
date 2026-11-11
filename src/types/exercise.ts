@@ -1,7 +1,12 @@
 export type ExerciseType =
+    | 'vocabulary'
+    | 'conjugation'
+    | 'quiz'
     | 'multiple-choice'
     | 'fill-blank'
     | 'matching'
+    | 'crossword'
+    | 'word-search'
 
 export type ExerciseStatus =
     | 'available'
@@ -15,6 +20,18 @@ export type Exercise = {
     title: string
     description?: string
     type: ExerciseType
-    status: ExerciseStatus
+    status?: ExerciseStatus
     order: number
+}
+
+export type VocabularyItem = {
+    id: string
+    term: string
+    definition: string
+    example?: string
+    pronunciation?: string
+}
+
+export type ExerciseDetail = Exercise & {
+    vocabularyItems: VocabularyItem[]
 }
