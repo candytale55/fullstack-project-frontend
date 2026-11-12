@@ -1,6 +1,6 @@
 /* Loads authenticated progress for DashboardPage and ProgressPage. */
 
-import { getMyProgress } from '../services/progressService'
+import { getMyProgress } from '../services/progress.service'
 import useFetch from './useFetch'
 
 
