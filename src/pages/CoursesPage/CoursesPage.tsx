@@ -1,15 +1,17 @@
 /*
  * src/pages/CoursesPage/CoursesPage.tsx
  *
- * Loads courses for the selected language through courseService.
+ * Loads courses for the selected language through course.service.
  * Each course id is used to navigate to its course content.
  */
 
-import { useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 
-import { getCoursesByLanguage } from '../../services/courseService'
-import useFetch from '../../hooks/useFetch'
+import { getCoursesByLanguage } from '../../services/course.service'
+import { getExercisesForCourse } from '../../services/exercise.service'
+import { getMyProgress } from '../../services/progress.service'
+import type { Course } from '../../types/course.types'
 
 import Alert from '../../components/ui/Alert/Alert'
 import Loader from '../../components/ui/Loader/Loader'
@@ -20,28 +22,61 @@ import styles from './CoursesPage.module.css'
 export default function CoursesPage() {
     const { languageId } = useParams()
 
-    const loadCourses = useCallback(
-        async () => {
+    const [courses, setCourses] = useState<Course[]>([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState('')
+    const [lastCourseId, setLastCourseId] = useState<string | null>(null)
+
+
+    useEffect(() => {
+        const loadCourses = async () => {
             if (!languageId) {
-                throw new Error('Language not found')
+                setError('Language not found')
+                setLoading(false)
+                return
             }
 
-            return getCoursesByLanguage(languageId)
-        },
-        [languageId]
-    )
+            try {
+                const data =
+                    await getCoursesByLanguage(languageId)
 
-    const {
-        data: courses,
-        loading,
-        error,
-    } = useFetch(
-        loadCourses,
-        {
-            initialData: [],
-            errorMessage: 'Failed to load courses',
+                try {
+                    const progress = await getMyProgress()
+                    setLastCourseId(progress[0]?.course.id ?? null)
+                } catch {
+                    setLastCourseId(null)
+                }
+
+                const coursesWithExercises = await Promise.all(
+                    data.map(async (course) => {
+                        const exercises =
+                            await getExercisesForCourse(course)
+
+                        return exercises.length > 0
+                            ? course
+                            : null
+                    })
+                )
+
+                // Keep empty courses in the database, but hide them until content exists.
+                setCourses(
+                    coursesWithExercises.filter(
+                        (course): course is Course => course !== null
+                    )
+                )
+            } catch (error) {
+                setError(
+                    error instanceof Error
+                        ? error.message
+                        : 'Failed to load courses'
+                )
+            } finally {
+                setLoading(false)
+            }
         }
-    )
+
+        loadCourses()
+    }, [languageId])
 
 
     if (loading) {
@@ -66,9 +101,9 @@ export default function CoursesPage() {
                 {courses.map((course) => (
                     <article
                         key={course.id}
-                        className={`${styles.courseCard} ${course.code === 'pt-conjugation'
-                                ? styles.courseCardAvailable
-                                : ''
+                        className={`${styles.courseCard} ${course.id === lastCourseId
+                            ? styles.courseCardAvailable
+                            : ''
                             }`}
                     >
                         <div className={styles.courseInfo}>

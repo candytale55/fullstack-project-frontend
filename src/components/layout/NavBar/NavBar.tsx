@@ -1,6 +1,9 @@
 /* Renders navigation links according to authentication state from useAuth. */
 
-import { NavLink, useNavigate } from 'react-router'
+import {
+  NavLink,
+  useNavigate,
+} from 'react-router'
 
 import Button from '../../ui/Button/Button'
 import useAuth from '../../../hooks/useAuth'
@@ -64,8 +67,8 @@ export default function NavBar() {
                 to="/progress"
                 className={({ isActive }) =>
                   isActive
-                    ? `${styles.link} ${styles.active}`
-                    : styles.link
+                    ? `${styles.link} ${styles.active} ${styles.progressLink}`
+                    : `${styles.link} ${styles.progressLink}`
                 }>
                 Progreso
               </NavLink>

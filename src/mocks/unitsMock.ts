@@ -1,4 +1,4 @@
-import type { Unit } from '../types/unit'
+import type { Unit } from '../types/unit.types'
 
 export const unitsMock: Unit[] = [
     {

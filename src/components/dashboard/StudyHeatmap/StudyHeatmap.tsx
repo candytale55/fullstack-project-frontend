@@ -1,25 +1,32 @@
-/* Renders a simple studied/not-studied grid grouped by calendar month. */
+/* Renders DashboardPage's prepared calendar months with study-day highlights. */
 
-import { buildHeatmapMonths, formatDayLabel } from './studyHeatmapUtils'
+import {
+    formatDayLabel,
+    type HeatmapMonth,
+} from './studyHeatmapUtils'
 import styles from './StudyHeatmap.module.css'
 
 
 type StudyHeatmapProps = {
     studyDays: string[]
+    months: HeatmapMonth[]
 }
 
 
 export default function StudyHeatmap({
     studyDays,
+    months,
 }: StudyHeatmapProps) {
     const studiedDays = new Set(studyDays)
-    const months = buildHeatmapMonths()
+    const monthDescription = months.length === 1
+        ? 'último mes'
+        : `últimos ${months.length} meses`
 
     return (
         <div
             className={styles.heatmap}
             role="img"
-            aria-label="Mapa de días de estudio de los últimos 3 meses"
+            aria-label={`Mapa de días de estudio de los ${monthDescription}`}
         >
             {months.map((month) => (
                 <div className={styles.month} key={month.key}>

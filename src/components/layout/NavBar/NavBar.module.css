@@ -43,7 +43,8 @@
 }
 
 .user {
-  color: var(--color-text-muted);
+  color: var(--color-user-name);
+  font-weight: 600;
 }
 
 @media (min-width: 768px) {
@@ -53,5 +54,36 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+  }
+}
+
+@media (max-width: 767px) {
+  /*
+   * Mobile navigation keeps the most useful destinations, the signed-in user, and
+   * logout on a single row. The brand and progress page remain available on desktop.
+   */
+  .content {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .brand,
+  .progressLink {
+    display: none;
+  }
+
+  .navigation {
+    width: 100%;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: var(--space-xs);
+  }
+
+  .user {
+    max-width: 18vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }

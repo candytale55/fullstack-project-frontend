@@ -1,137 +1,188 @@
-/* Loads unit data through the conjugation service and passes it to the exercise component. */
+/* Loads one exercise and selects its practice component from exercise.type. */
 
-import { useCallback } from 'react'
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router'
 
-import {
-  useNavigate,
-  useParams
-} from 'react-router'
-
-import ConjugationExercise, {
-  type PortugueseVerbConjugation
-} from '../../components/exercises/ConjugationExercise/ConjugationExercise'
+import ConjugationExercise from '../../components/exercises/ConjugationExercise/ConjugationExercise'
+import VocabularyExercise from '../../components/exercises/VocabularyExercise/VocabularyExercise'
 
 import {
-  getPortugueseVerbConjugationsByUnit
+    getPortugueseVerbConjugationsByCourse,
+    getPortugueseVerbConjugationsByUnit,
 } from '../../components/exercises/ConjugationExercise/portugueseVerbConjugationService'
+import { getExerciseById } from '../../services/exercise.service'
+import { getCourseById } from '../../services/course.service'
+import { saveStudySession } from '../../services/progress.service'
 
-import {
-  saveStudySession
-} from '../../services/progressService'
+import type { Course } from '../../types/course.types'
+import type { PortugueseVerbConjugation } from '../../types/conjugation.types'
+import type { Exercise } from '../../types/exercise.types'
 
-import useFetch from '../../hooks/useFetch'
+import Alert from '../../components/ui/Alert/Alert'
+import Loader from '../../components/ui/Loader/Loader'
+
+import styles from './ExercisePage.module.css'
+
+
+type SessionResult = {
+    questionsAnswered: number
+    correctAnswers: number
+}
+
 
 export default function ExercisePage() {
-
-  const {
-    languageId,
-    courseId,
-    unitId
-  } = useParams()
-
-
-  const navigate = useNavigate()
-
-
-  const loadConjugations = useCallback(
-    async () => {
-      if (!unitId) {
-        throw new Error('Unidad no encontrada')
-      }
-
-      try {
-        return await getPortugueseVerbConjugationsByUnit(
-          unitId
-        )
-      } catch (error) {
-        console.error(
-          'Error loading conjugations:',
-          error
-        )
-
-        throw new Error(
-          'No se pudieron cargar los ejercicios'
-        )
-      }
-    },
-    [unitId]
-  )
-
-  const {
-    data: conjugations,
-    loading: isLoading,
-    error,
-  } = useFetch(
-    loadConjugations,
-    {
-      initialData: [] as PortugueseVerbConjugation[],
-    }
-  )
-
-
-
-  /* --------------- Save progress --------------- */
-
-  // Connects the completed session to the authenticated course progress endpoint.
-  const handleSessionComplete = async (
-    result: {
-      questionsAnswered: number
-      correctAnswers: number
-    }
-  ) => {
-
-    if (!courseId) {
-      throw new Error(
-        'Course ID is missing'
-      )
-    }
-
-
-    await saveStudySession(
-      courseId,
-      {
-        ...result,
+    const {
+        languageId,
+        courseId,
         unitId,
-      }
+        exerciseId,
+    } = useParams()
+    const navigate = useNavigate()
+
+    const [exercise, setExercise] = useState<Exercise | null>(null)
+    const [course, setCourse] = useState<Course | null>(null)
+    const [conjugations, setConjugations] = useState<PortugueseVerbConjugation[]>([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+
+    useEffect(() => {
+        const loadExercise = async () => {
+            if (!languageId || !courseId || !exerciseId) {
+                setError('Exercise not found')
+                setLoading(false)
+                return
+            }
+
+            try {
+                const [exerciseData, courseData] = await Promise.all([
+                    getExerciseById(exerciseId),
+                    getCourseById(courseId),
+                ])
+
+                if (
+                    exerciseData.courseId !== courseId ||
+                    courseData.languageId !== languageId
+                ) {
+                    throw new Error('Exercise not found')
+                }
+
+                if (unitId && exerciseData.unitId !== unitId) {
+                    throw new Error('Exercise not found')
+                }
+
+                if (!unitId && exerciseData.unitId) {
+                    throw new Error('Exercise not found')
+                }
+
+                if (exerciseData.type === 'conjugation') {
+                    const data = unitId
+                        ? await getPortugueseVerbConjugationsByUnit(
+                            unitId,
+                            courseId
+                        )
+                        : await getPortugueseVerbConjugationsByCourse(courseId)
+
+                    setConjugations(data)
+                }
+
+                setExercise(exerciseData)
+                setCourse(courseData)
+            } catch (error) {
+                setError(
+                    error instanceof Error
+                        ? error.message
+                        : 'Failed to load exercise'
+                )
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        loadExercise()
+    }, [languageId, courseId, unitId, exerciseId])
+
+    const handleSessionComplete = async (
+        result: SessionResult
+    ) => {
+        if (!courseId) {
+            throw new Error('Course ID is missing')
+        }
+
+        await saveStudySession(
+            courseId,
+            {
+                ...result,
+                ...(unitId && { unitId }),
+            }
+        )
+    }
+
+    const handleExit = () => {
+        if (!languageId || !courseId) {
+            navigate('/languages')
+            return
+        }
+
+        const basePath = `/languages/${languageId}/courses/${courseId}`
+        navigate(
+            unitId
+                ? `${basePath}/units/${unitId}/exercises`
+                : `${basePath}/exercises`
+        )
+    }
+
+    if (loading) {
+        return <Loader />
+    }
+
+    if (error) {
+        return (
+            <div className={styles.exercisePage}>
+                <Alert variant="error">{error}</Alert>
+            </div>
+        )
+    }
+
+    if (!exercise || !course) {
+        return (
+            <div className={styles.exercisePage}>
+                <Alert variant="error">Exercise not found</Alert>
+            </div>
+        )
+    }
+
+    if (exercise.type === 'vocabulary') {
+        return (
+            <VocabularyExercise
+                vocabulary={exercise.vocabularyItems ?? []}
+                onExit={handleExit}
+                onSessionComplete={handleSessionComplete}
+            />
+        )
+    }
+
+    if (exercise.type === 'conjugation') {
+        const unit = unitId
+            ? course.units.find((courseUnit) => courseUnit.id === unitId)
+            : undefined
+
+        return (
+            <ConjugationExercise
+                conjugations={conjugations}
+                onExit={handleExit}
+                onSessionComplete={handleSessionComplete}
+                languageName={course.languageId}
+                courseName={course.title}
+                unitName={unit?.title ?? course.title}
+            />
+        )
+    }
+
+    return (
+        <div className={styles.exercisePage}>
+            <Alert variant="error">
+                This exercise type is not supported yet.
+            </Alert>
+        </div>
     )
-  }
-
-  /* --------------- Navigation --------------- */
-
-  // Returns to the current course's unit list.
-  const handleExit = () => {
-
-    navigate(
-      `/languages/${languageId}/courses/${courseId}/units`
-    )
-  }
-
-
-  /* --------------- Render states --------------- */
-
-  if (!unitId) {
-    return <p>Unidad no encontrada</p>
-  }
-
-
-  if (isLoading) {
-    return <p>Cargando...</p>
-  }
-
-
-  if (error) {
-    return <p>{error}</p>
-  }
-
-
-  return (
-    <ConjugationExercise
-      conjugations={conjugations}
-      onExit={handleExit}
-      onSessionComplete={handleSessionComplete}
-      languageName="Português"
-      courseName="Conjugación de verbos"
-      unitName={conjugations[0]?.tense ?? ''}
-    />
-  )
 }

@@ -1,4 +1,4 @@
-/* Runs the conjugation session using questions generated from API records. */
+/* Renders questions from API conjugations, including their preserved Anki tags. */
 
 import {
   useCallback,
@@ -20,31 +20,13 @@ import type {
 
 /* --------------- Types --------------- */
 
-export type PortugueseVerbForms = {
-  eu?: string
-  tu?: string
-  eleElaVoce?: string
-  nos?: string
-  elesElasVoces?: string
-}
+import type {
+  PortugueseVerbConjugation
+} from '../../../types/conjugation.types'
 
 
-export type PortugueseVerbConjugation = {
-  _id: string
 
-  infinitive: string
-  mood: string
-  tense: string
 
-  forms: PortugueseVerbForms
-  pronunciation?: PortugueseVerbForms
-
-  negativeForms?: PortugueseVerbForms
-  negativePronunciation?: PortugueseVerbForms
-
-  tags: string[]
-  curriculumTags: string[]
-}
 
 type ConjugationExerciseProps = {
   conjugations: PortugueseVerbConjugation[]
@@ -61,10 +43,9 @@ type ConjugationExerciseProps = {
 }
 
 
-type StudySessionResult = {
-  questionsAnswered: number
-  correctAnswers: number
-}
+import type { StudySessionResult } from '../../../types/exercise.types'
+
+
 
 /* --------------- Component --------------- */
 
@@ -499,7 +480,7 @@ export default function ConjugationExercise({
 
             <label
               htmlFor="conjugationAnswer"
-              className={styles.srOnly}
+              className="sr-only"
             >
               Escribe la conjugación
             </label>

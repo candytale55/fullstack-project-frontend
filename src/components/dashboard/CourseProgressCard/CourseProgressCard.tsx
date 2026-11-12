@@ -1,7 +1,7 @@
 /* Presents one normalized course progress record for DashboardPage. */
 
 import Button from '../../ui/Button/Button'
-import type { CourseProgress } from '../../../types/progress'
+import type { CourseProgress } from '../../../types/progress.types'
 
 import styles from './CourseProgressCard.module.css'
 
@@ -10,6 +10,7 @@ type CourseProgressCardProps = {
     progress: CourseProgress
     onContinue?: () => void
     continueLabel?: string
+    isLatest?: boolean
 }
 
 
@@ -17,6 +18,7 @@ export default function CourseProgressCard({
     progress,
     onContinue,
     continueLabel = 'Continuar estudiando',
+    isLatest = false,
 }: CourseProgressCardProps) {
     // Avoids invalid percentages when no questions were answered.
     const precision =
@@ -34,7 +36,7 @@ export default function CourseProgressCard({
             : 'Sin actividad'
 
     return (
-        <section className={styles.card}>
+        <section className={`${styles.card} ${isLatest ? styles.latest : ''}`}>
             <h2>{progress.course.language.name}</h2>
 
             <div className={styles.courseInfo}>

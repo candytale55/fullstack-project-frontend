@@ -1,15 +1,21 @@
 /*
  * src/pages/CoursePage/CoursePage.tsx
  *
- * Loads the selected course through courseService.
+ * Loads the selected course through course.service.
  * The course structure determines whether navigation continues to units or exercises.
  */
 
-import { useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 
-import { getCourseById } from '../../services/courseService'
-import useFetch from '../../hooks/useFetch'
+import { getCourseById } from '../../services/course.service'
+import { getMyProgress } from '../../services/progress.service'
+import {
+  getExercisesByCourse,
+  getExercisesByUnit,
+} from '../../services/exercise.service'
+import type { Course } from '../../types/course.types'
+import type { Exercise } from '../../types/exercise.types'
 
 import Alert from '../../components/ui/Alert/Alert'
 import Loader from '../../components/ui/Loader/Loader'
@@ -23,35 +29,79 @@ export default function CoursePage() {
     courseId,
   } = useParams()
 
-  const loadCourse = useCallback(
-    async () => {
-      if (!languageId || !courseId) {
-        throw new Error('Course not found')
+  const [course, setCourse] =
+    useState<Course | null>(null)
+
+  const [exercises, setExercises] =
+    useState<Exercise[]>([])
+
+  const [unitExercises, setUnitExercises] =
+    useState<Record<string, Exercise[]>>({})
+
+  const [lastStudiedUnitId, setLastStudiedUnitId] =
+    useState<string | null>(null)
+
+  const [loading, setLoading] =
+    useState(true)
+
+  const [error, setError] =
+    useState('')
+
+
+  useEffect(() => {
+    const loadCourse = async () => {
+      if (!courseId) {
+        setError('Course not found')
+        setLoading(false)
+        return
       }
 
-      const course =
-        await getCourseById(courseId)
+      try {
+        const data = await getCourseById(courseId)
+        setCourse(data)
 
-      if (course.languageId !== languageId) {
-        throw new Error('Course not found')
+        try {
+          const progress = await getMyProgress()
+          const courseProgress = progress.find(
+            (item) => item.course.id === courseId
+          )
+          setLastStudiedUnitId(
+            courseProgress?.lastStudiedUnitId ?? null
+          )
+        } catch {
+          setLastStudiedUnitId(null)
+        }
+
+        // Courses without embedded units list their exercises here directly.
+        if (data.structure === 'exercises') {
+          setExercises(
+            await getExercisesByCourse(courseId)
+          )
+        } else {
+          const exerciseEntries = await Promise.all(
+            data.units.map(async (unit) => [
+              unit.id,
+              await getExercisesByUnit(courseId, unit.id),
+            ] as const)
+          )
+
+          setUnitExercises(
+            Object.fromEntries(exerciseEntries)
+          )
+        }
+      } catch (error) {
+        setError(
+          error instanceof Error
+            ? error.message
+            : 'Failed to load course'
+        )
+      } finally {
+        setLoading(false)
       }
-
-      return course
-    },
-    [courseId, languageId]
-  )
-
-  const {
-    data: course,
-    loading,
-    error,
-  } = useFetch(
-    loadCourse,
-    {
-      initialData: null,
-      errorMessage: 'Failed to load course',
     }
-  )
+
+    loadCourse()
+  }, [courseId])
 
 
   if (loading) {
@@ -72,11 +122,9 @@ export default function CoursePage() {
     )
   }
 
-
-  const contentPath =
-    course.structure === 'units'
-      ? `/languages/${languageId}/courses/${courseId}/units`
-      : `/languages/${languageId}/courses/${courseId}/exercises`
+  const visibleUnits = course.units.filter(
+    (unit) => (unitExercises[unit.id] ?? []).length > 0
+  )
 
 
   return (
@@ -91,30 +139,83 @@ export default function CoursePage() {
         )}
       </header>
 
-      <section
-        className={`${styles.content} ${course.code === 'pt-conjugation'
-            ? styles.contentAvailable
-            : ''
-          }`}
-      >
-        <h2>Contenido del curso</h2>
+      {course.structure === 'units' ? (
+        <section className={styles.contentSection}>
+          <h2>Unidades</h2>
 
-        <p>
-          {course.contentCount}{' '}
-          {course.structure === 'units'
-            ? 'unidades'
-            : 'ejercicios'}
-        </p>
+          <div className={styles.itemList}>
+            {visibleUnits.map((unit) => {
+              const exercises = unitExercises[unit.id] ?? []
+              const onlyExercise = exercises.length === 1
+              const destination = onlyExercise
+                ? `/languages/${languageId}/courses/${courseId}/units/${unit.id}/exercises/${exercises[0].id}`
+                : `/languages/${languageId}/courses/${courseId}/units/${unit.id}/exercises`
 
-        <Link
-          to={contentPath}
-          className={styles.contentLink}
-        >
-          {course.structure === 'units'
-            ? 'Ver unidades'
-            : 'Ver ejercicios'}
-        </Link>
-      </section>
+              return (
+                <article
+                  key={unit.id}
+                  className={`${styles.itemCard} ${unit.id === lastStudiedUnitId
+                    ? styles.itemCardAvailable
+                    : ''
+                    }`}
+                >
+                  <div>
+                    <h3>{unit.title}</h3>
+                    {unit.description && (
+                      <p>{unit.description}</p>
+                    )}
+                  </div>
+
+                  <Link
+                    to={destination}
+                    className={styles.contentLink}
+                  >
+                    {onlyExercise
+                      ? 'Comenzar ejercicio'
+                      : 'Ver ejercicios'}
+                  </Link>
+                </article>
+              )
+            })}
+          </div>
+
+          {visibleUnits.length === 0 && (
+            <p>No hay unidades disponibles todavía.</p>
+          )}
+        </section>
+      ) : (
+        <section className={styles.contentSection}>
+          <h2>Ejercicios</h2>
+
+          <div className={styles.itemList}>
+            {exercises.map((exercise) => (
+              <article
+                key={exercise.id}
+                className={styles.itemCard}
+              >
+                <div>
+                  <h3>{exercise.title}</h3>
+                  {exercise.description && (
+                    <p>{exercise.description}</p>
+                  )}
+                  <p>Tipo: {exercise.type}</p>
+                </div>
+
+                <Link
+                  to={`/languages/${languageId}/courses/${courseId}/exercises/${exercise.id}`}
+                  className={styles.contentLink}
+                >
+                  Abrir ejercicio
+                </Link>
+              </article>
+            ))}
+          </div>
+
+          {exercises.length === 0 && (
+            <p>No hay ejercicios disponibles todavía.</p>
+          )}
+        </section>
+      )}
     </div>
   )
 }
